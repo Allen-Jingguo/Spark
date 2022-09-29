@@ -7,15 +7,16 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -135,6 +136,46 @@ public class KafkaInbound implements Inbound {
 
     @Override
     public byte[] next() {
+        byte[] bs = null;
+        ConsumerRecords<String, String> records = consumer.poll(5000L);
+        List<Map<String,Object>> result = new ArrayList<>();
+        ByteArrayOutputStream bos = null;
+        ObjectOutputStream oos = null;
+
+        try {
+            if(!records.isEmpty()){
+                for (ConsumerRecord<String, String> record : records) {
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("offset",record.offset());
+                    map.put("key",record.key());
+                    map.put("value",record.value());
+                    result.add(map);
+                }
+            }
+            bos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(bos);
+            oos.writeObject(result);
+            bs = bos.toByteArray();
+            oos.close();
+            bos.close();
+        } catch (IOException e) {
+            log.error("Exception::", e);
+        } finally {
+            if (bos!=null){
+                try {
+                    bos.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (oos!=null){
+                try {
+                    oos.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
         return new byte[0];
     }
 
