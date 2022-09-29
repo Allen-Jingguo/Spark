@@ -109,4 +109,21 @@ declare namespace API {
     /** User Status */
     userStatus?: number;
   };
+
+  type FLow = {
+    name?: number;
+    inboundName?: string;
+    parserName?: string;
+    filterName?: string;
+    keyMapperName?: string;
+    formatterName?: string;
+    outboundName?: string;
+    status?: string;
+  };
+
+  type KeyValue = {
+    label?: string;
+    value?: string;
+  };
+
 }
