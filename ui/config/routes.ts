@@ -22,39 +22,42 @@ export default [
   },
   {
     path: '/welcome',
-    name: 'welcome',
-    icon: 'smile',
+    name: 'Welcome',
+    //icon: 'smile',
     component: './Welcome',
   },
   {
-    path: '/welcome2',
-    name: 'welcome2',
-    icon: 'smile',
-    component: './Welcome2',
+    path: '/inbound',
+    name: 'Inbound',
+    //icon: 'smile',
+    component: './Inbound',
   },
   {
-    path: '/admin',
-    name: 'admin',
-    icon: 'crown',
-    access: 'canAdmin',
-    routes: [
-      {
-        path: '/admin',
-        redirect: '/admin/sub-page',
-      },
-      {
-        path: '/admin/sub-page',
-        name: 'sub-page',
-        component: './Admin',
-      },
-    ],
+    path: '/outbound',
+    name: 'Outbound',
+    //icon: 'smile',
+    component: './Inbound',
   },
   {
-    name: 'list.table-list',
-    icon: 'table',
-    path: '/list',
-    component: './TableList',
+    path: '/formatter',
+    name: 'Mapper',
+    //icon: 'smile',
+    component: './KeyMapper',
   },
+  {
+    path: '/formatter',
+    name: 'Formatter',
+    //icon: 'smile',
+    component: './Formatter',
+  },
+  {
+    path: '/flow',
+    name: 'Flow management',
+    //icon: 'smile',
+    component: './Flow',
+  },
+
+
   {
     path: '/',
     redirect: '/welcome',
