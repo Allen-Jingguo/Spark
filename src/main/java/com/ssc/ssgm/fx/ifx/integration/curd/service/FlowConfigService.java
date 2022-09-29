@@ -6,12 +6,14 @@ import com.ssc.ssgm.fx.ifx.integration.curd.model.FlowConfigEntity;
 import com.ssc.ssgm.fx.ifx.integration.curd.model.FlowConfigExample;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AutoConfigureAfter(FlowConfigMapper.class)
 public class FlowConfigService {
 
     @Autowired
@@ -34,5 +36,9 @@ public class FlowConfigService {
         FlowConfigEntity entity = new FlowConfigEntity();
         BeanUtils.copyProperties(flowConfig, entity);
         return flowConfigMapper.insert(entity);
+    }
+
+    public int disableConfig(Long id) {
+        return flowConfigMapper.deleteById(Long.toString(id));
     }
 }

@@ -77,6 +77,8 @@ public class FlowContext implements ApplicationContextAware, InitializingBean {
         outboundConfigs.add(outboundConfig);
     }
 
+    public void removeFlowConfig(String id) { flowConfigs.removeIf(flowConfig->{ return flowConfig.getId().equals(id);});}
+
     public void removeFormatterConfig(String id) { formatterConfigs.removeIf(formatterConfig ->{ return formatterConfig.getId().equals(id);});}
 
     public void removeKeyMapperConfig(String id) { keyMapperConfigs.removeIf(keyMapperConfig->{ return keyMapperConfig.getId().equals(id);});}

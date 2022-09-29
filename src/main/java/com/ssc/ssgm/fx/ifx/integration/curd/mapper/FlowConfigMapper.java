@@ -21,6 +21,11 @@ public interface FlowConfigMapper {
     /**
      * @mbg.generated generated automatically, do not modify!
      */
+    int deleteById(String id);
+
+    /**
+     * @mbg.generated generated automatically, do not modify!
+     */
     int insert(FlowConfigEntity row);
 
     /**

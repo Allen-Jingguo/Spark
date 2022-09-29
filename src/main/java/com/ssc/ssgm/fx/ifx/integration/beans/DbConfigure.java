@@ -30,7 +30,7 @@ import java.util.Properties;
 @ConditionalOnClass({DataSource.class})
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
 @AutoConfigureBefore(DataSourceTransactionManagerAutoConfiguration.class)
-@MapperScan(basePackages = "com.ssc.ssgm.fx.ifx.intergration.crud",sqlSessionTemplateRef = "sqlSessionTemplate")
+@MapperScan(basePackages = "com.ssc.ssgm.fx.ifx.integration.curd",sqlSessionTemplateRef = "sqlSessionTemplate")
 public class DbConfigure implements ApplicationContextAware {
 
     private static Logger log = LoggerFactory.getLogger(DbConfigure.class);
