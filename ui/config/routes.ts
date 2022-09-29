@@ -36,10 +36,10 @@ export default [
     path: '/outbound',
     name: 'Outbound',
     //icon: 'smile',
-    component: './Inbound',
+    component: './Outbound',
   },
   {
-    path: '/formatter',
+    path: '/mapper',
     name: 'Mapper',
     //icon: 'smile',
     component: './KeyMapper',

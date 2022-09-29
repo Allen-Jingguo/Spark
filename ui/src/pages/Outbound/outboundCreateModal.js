@@ -160,7 +160,7 @@ const OutboundCreateModal = (props) => {
               ''
             )}
 
-            <Form.Item name="properties" label="Properties">
+            <Form.Item name="properties" label="Properties (key=value , Used to initialize Outbound )">
               <Input.TextArea
                 style={{ width: 400, height: 200 }}
                 showCount

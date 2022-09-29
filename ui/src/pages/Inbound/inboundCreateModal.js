@@ -83,7 +83,7 @@ const InboundCreateModal = (props) => {
 
             <Form.Item
               name="type"
-              label="Outbound Type"
+              label="Inbound Type"
               rules={[{ required: true, message: 'Missing Outbound Type' }]}
             >
               <Select
