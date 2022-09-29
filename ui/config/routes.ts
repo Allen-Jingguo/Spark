@@ -52,7 +52,7 @@ export default [
   },
   {
     path: '/flow',
-    name: 'Flow management',
+    name: 'Flow-management',
     //icon: 'smile',
     component: './Flow',
   },

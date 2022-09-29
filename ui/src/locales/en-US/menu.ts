@@ -49,4 +49,9 @@ export default {
   'menu.editor.flow': 'Flow Editor',
   'menu.editor.mind': 'Mind Editor',
   'menu.editor.koni': 'Koni Editor',
+  'menu.Inbound': 'Inbound',
+  'menu.Outbound': 'Outbound',
+  'menu.Mapper': 'Mapper',
+  'menu.Formatter': 'Formatter',
+  'menu.Flow-management': 'Flow management',
 };
