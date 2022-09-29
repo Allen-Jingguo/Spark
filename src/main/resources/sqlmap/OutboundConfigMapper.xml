@@ -128,7 +128,7 @@
         <!-- @mbg.generated: generated automatically, do not modify! -->
         insert into OUTBOUND_CONFIG (ID,NAME, CREATED_TIME, OUTBOUND_TYPE,
         PROPERTIES)
-        values (#{id,jdbcType=LONG},#{name,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{outboundType,jdbcType=VARCHAR},
+        values (#{id,jdbcType=NUMERIC},#{name,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{outboundType,jdbcType=VARCHAR},
         #{properties,jdbcType=CLOB})
     </insert>
     <insert id="insertSelective" keyColumn="ID" keyProperty="id" parameterType="com.ssc.ssgm.fx.ifx.integration.curd.model.OutboundConfigEntity" useGeneratedKeys="true">
