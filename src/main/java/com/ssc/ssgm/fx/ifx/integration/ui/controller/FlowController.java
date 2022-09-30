@@ -39,7 +39,7 @@ public class FlowController {
         List<KeyValue> typeList = typeEunmList.stream().map(e ->{
             KeyValue keyValue = new KeyValue();
             keyValue.setLabel(e.toString());
-            keyValue.setName(e.toString());
+            keyValue.setValue(e.toString());
             return keyValue;
         } ).collect(Collectors.toList());
         return Response.success(typeList);
@@ -52,7 +52,7 @@ public class FlowController {
         List<KeyValue> inbounds = inboundConfigList.stream().map(e ->{
             KeyValue tKeyValue = new KeyValue();
             tKeyValue.setLabel(e.getName());
-            tKeyValue.setName(e.getName());
+            tKeyValue.setValue(e.getName());
             return tKeyValue;
         }).collect(Collectors.toList());
         return Response.success(inbounds);
@@ -64,7 +64,7 @@ public class FlowController {
         List<ParserEnum> typeEunmList = Arrays.asList(ParserEnum.values());
         List<KeyValue> typeList = typeEunmList.stream().map(e ->{
             KeyValue keyValue = new KeyValue();
-            keyValue.setName(e.toString());
+            keyValue.setValue(e.toString());
             keyValue.setLabel(e.toString());
             return keyValue;
         } ).collect(Collectors.toList());
@@ -77,7 +77,7 @@ public class FlowController {
         List<KeyMapperConfig> keyMapperConfigs = flowContext.getKeyMapperConfigs();
         List<KeyValue> keyValues = keyMapperConfigs.stream().map(e ->{
             KeyValue keyValue = new KeyValue();
-            keyValue.setName(e.getName());
+            keyValue.setValue(e.getName());
             keyValue.setLabel(e.getName());
             return keyValue;
         } ).collect(Collectors.toList());
@@ -90,7 +90,7 @@ public class FlowController {
         List<FormatterConfig> formatterConfigs = flowContext.getFormatterConfigs();
         List<KeyValue> keyValues = formatterConfigs.stream().map(e ->{
             KeyValue keyValue = new KeyValue();
-            keyValue.setName(e.getName());
+            keyValue.setValue(e.getName());
             keyValue.setLabel(e.getName());
             return keyValue;
         } ).collect(Collectors.toList());
@@ -105,7 +105,7 @@ public class FlowController {
         List<KeyValue> outbounds = outboundConfigList.stream().map(e ->{
             KeyValue tKeyValue = new KeyValue();
             tKeyValue.setLabel(e.getName());
-            tKeyValue.setName(e.getName());
+            tKeyValue.setValue(e.getName());
             return tKeyValue;
         }).collect(Collectors.toList());
         return Response.success(outbounds);

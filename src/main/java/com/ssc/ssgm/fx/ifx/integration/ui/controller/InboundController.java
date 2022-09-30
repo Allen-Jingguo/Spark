@@ -38,7 +38,7 @@ public class InboundController {
         List<KeyValue> types = typeEunmList.stream().map(e ->{
             KeyValue keyValue = new KeyValue();
             keyValue.setLabel(e.toString());
-            keyValue.setName(e.toString());
+            keyValue.setValue(e.toString());
             return keyValue;
         } ).collect(Collectors.toList());
         return Response.success(types);

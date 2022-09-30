@@ -10,7 +10,7 @@ const getList = async function (
   options?: { [key: string]: any },
 ) {
   return request<any>('/api/mapper/list', {
-    method: 'GET',
+    method: 'POST',
     params: {
       ...params,
     },
@@ -20,7 +20,7 @@ const getList = async function (
 
 export async function createNew(params: any, options?: { [key: string]: any }) {
   return request<any>('/api/mapper/create_new', {
-    method: 'post',
+    method: 'POST',
     params: {
       ...params,
     },
@@ -56,7 +56,7 @@ const disable = async function (
   options?: { [key: string]: any },
 ) {
   return request<any>('/api/mapper/disable', {
-    method: 'GET',
+    method: 'POST',
     params: {
       ...params,
     },

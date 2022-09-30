@@ -3,18 +3,23 @@ package com.ssc.ssgm.fx.ifx.integration.common;
 
 public class Response<T> {
 
-    private Integer code;
+//    success: boolean; // if request is success
+//    data?: any; // response data
+//    errorCode?: string; // code for errorType
+//    errorMessage?: str
+
+    private boolean success;
 
     private T data;
 
-    private String msg;
+    private String errorMessage;
 
-    public Integer getCode() {
-        return code;
+    public boolean getSuccess() {
+        return success;
     }
 
-    public void setCode(Integer code) {
-        this.code = code;
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
     public T getData() {
@@ -25,38 +30,38 @@ public class Response<T> {
         this.data = data;
     }
 
-    public String getMsg() {
-        return msg;
+    public String getErrorMessage() {
+        return errorMessage;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
-    public Response(Integer code, String msg, T data) {
-        this.code = code;
-        this.msg = msg;
+    public Response(boolean success, String errorMessage, T data) {
+        this.success = success;
+        this.errorMessage = errorMessage;
         this.data = data;
     }
 
     public static Response<Boolean> success() {
-        return new Response<>(RespCode.SUCCESS.getCode(), null, null);
+        return new Response<>(true, null, null);
     }
 
     public static <T> Response<T> success(T data) {
-        return new Response<>(RespCode.SUCCESS.getCode(), RespCode.SUCCESS.getDesc(), data);
+        return new Response<>(true, RespCode.SUCCESS.getDesc(), data);
     }
 
     public static Response<Boolean> fail(String msg) {
-        return new Response<>(RespCode.FAIL.getCode(), msg, null);
+        return new Response<>(false, msg, null);
     }
 
     public static Response<Boolean> fail() {
-        return new Response<>(RespCode.FAIL.getCode(), RespCode.FAIL.getDesc(), null);
+        return new Response<>(false, RespCode.FAIL.getDesc(), null);
     }
 
     public static Response<Boolean> unlogin() {
-        return new Response<>(RespCode.UN_LOGIN.getCode(), RespCode.UN_LOGIN.getDesc(), null);
+        return new Response<>(false, RespCode.UN_LOGIN.getDesc(), null);
     }
 
 }

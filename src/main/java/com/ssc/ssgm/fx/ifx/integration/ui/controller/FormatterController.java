@@ -42,14 +42,14 @@ public class FormatterController {
         List<KeyValue> types = typeEunmList.stream().map(e -> {
             KeyValue keyValue = new KeyValue();
             keyValue.setLabel(e.name());
-            keyValue.setName(e.name());
+            keyValue.setValue(e.name());
             return keyValue;
         }).collect(Collectors.toList());
         return Response.success(types);
     }
 
     @ApiOperation("list")
-    @GetMapping("/list")
+    @PostMapping("/list")
     public Response<List<FormatterConfig>> list(@RequestBody FormatterConfig formatterConfig) {
         //TODO to be optimized
         List<FormatterConfig> configs = formatterConfigService.loadAll();

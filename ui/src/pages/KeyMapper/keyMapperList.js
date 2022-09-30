@@ -23,11 +23,11 @@ import {
 } from '@ant-design/pro-components';
 import { Card } from 'antd';
 import React, { useState, useEffect } from 'react';
-import fomatterApi from '@/services/spark/fomatterApi';
-import FormatterCreateModal from '@/pages/Formatter/formatterCreateModal';
+import keyMapperApi from '@/services/spark/keyMapperApi';
+import KeyMapperCreateModal from '@/pages/KeyMapper/keyMapperCreateModal';
 
 const view = (record) => {
-  fomatterApi.view({ ...record }).then((result) => {
+  keyMapperApi.view({ ...record }).then((result) => {
     console.log(result);
     if (result) {
       message.success('start success!');
@@ -38,7 +38,7 @@ const view = (record) => {
 
 const disable = (record) => {
   console.log(record);
-  fomatterApi.disable({ ...record }).then((result) => {
+  keyMapperApi.disable({ ...record }).then((result) => {
     console.log(result);
     if (result) {
       message.success('operate successfully!');
@@ -129,7 +129,7 @@ const FormatterList = () => {
   useEffect(() => {}, []);
 
   const doSearch = (values) => {
-    fomatterApi.getList(values).then((datas) => {
+    keyMapperApi.getList(values).then((datas) => {
       setTableList(flowList);
     });
   };
@@ -160,7 +160,7 @@ const FormatterList = () => {
               <Col>
                 <Form.Item
                   name="name"
-                  label="Name"
+                  label="Namey"
                   rules={[{ required: true, message: 'Missing name' }]}
                 >
                   <Input />
@@ -213,7 +213,7 @@ const FormatterList = () => {
           <Table columns={columns} dataSource={tableList} pagination={true} />
         </div>
       </Card>
-      {showCreateModal && <FormatterCreateModal closeCreateModal={closeCreateModal} />}
+      {showCreateModal && <KeyMapperCreateModal closeCreateModal={closeCreateModal} />}
     </PageContainer>
   );
 };

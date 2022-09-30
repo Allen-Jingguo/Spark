@@ -6,6 +6,6 @@ import lombok.Data;
 public class KeyValue {
 
     private String label;
-    private String name;
+    private String value;
 
 }

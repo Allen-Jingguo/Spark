@@ -43,14 +43,14 @@ public class MapperController {
         List<KeyValue> types = typeEunmList.stream().map(e -> {
             KeyValue keyValue = new KeyValue();
             keyValue.setLabel(e.name());
-            keyValue.setName(e.name());
+            keyValue.setValue(e.name());
             return keyValue;
         }).collect(Collectors.toList());
         return Response.success(types);
     }
 
     @ApiOperation("list")
-    @GetMapping("/list")
+    @PostMapping("/list")
     public Response<List<MapperDTO>> list(@RequestBody MapperDTO mapperDTO) {
 
         List<KeyMapperConfig> configs = keyMapperConfigService.getForList(mapperDTO);

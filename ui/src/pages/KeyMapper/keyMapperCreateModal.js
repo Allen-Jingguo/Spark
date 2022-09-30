@@ -37,16 +37,16 @@ const KeyMapperCreateModal = (props) => {
   };
 
   useEffect(() => {
-    keyMapperApi.getAllFormatterType().then((data) => {
-      setAllType(data);
+    keyMapperApi.getAllMapperType().then((resp) => {
+      setAllType(resp.data);
     });
   }, []);
 
   const doCreateNew = (values) => {
     setConfirmLoading(true);
 
-    keyMapperApi.createNew({ ...values }).then((data) => {
-      if (data) {
+    keyMapperApi.createNew({ ...values }).then((resp) => {
+      if (resp.success) {
         message.success('operate successfully!');
         props.closeCreateModal();
       }
@@ -86,11 +86,7 @@ const KeyMapperCreateModal = (props) => {
               label="Type"
               rules={[{ required: true, message: 'Missing Outbound Type' }]}
             >
-              <Select
-                options={[{ label: 'Key-value', value: 'Key-value' }, ...allType]}
-                style={{ width: 400 }}
-                onChange={(value) => {}}
-              />
+              <Select options={allType} style={{ width: 400 }} />
             </Form.Item>
 
             <Form.Item
