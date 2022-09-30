@@ -43,9 +43,10 @@ public class AppTaskExecutor implements ApplicationContextAware, InitializingBea
             if (defaultFlows != null && !defaultFlows.isEmpty()) {
                 defaultFlows.forEach(defaultFlow -> {
                     ExecutorUtil.getAsyncTaskExecutor().submit(() -> {
-                        if(defaultFlow.getPersistStatus()== FlowStatus.RUNNABLE){
-                            defaultFlow.start();
-                        }
+//                        if(defaultFlow.getPersistStatus()== FlowStatus.RUNNABLE){
+//                            defaultFlow.start();
+//                        }
+                        defaultFlow.execute();
                     });
                 });
             }
@@ -60,9 +61,10 @@ public class AppTaskExecutor implements ApplicationContextAware, InitializingBea
                     fixTimeLoadFlows.forEach(defaultFlow -> {
                         ExecutorUtil.getAsyncTaskExecutor().submit(() -> {
                             try {
-                                if(defaultFlow.getPersistStatus()== FlowStatus.RUNNABLE){
-                                    defaultFlow.start();
-                                }
+//                                if(defaultFlow.getPersistStatus()== FlowStatus.RUNNABLE){
+//                                    defaultFlow.start();
+//                                }
+                                defaultFlow.execute();
                             } catch (Exception e) {
                                 log.error("Exception::", e);
                             }

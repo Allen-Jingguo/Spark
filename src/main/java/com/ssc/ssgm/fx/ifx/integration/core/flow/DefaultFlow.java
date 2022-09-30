@@ -52,7 +52,8 @@ public class DefaultFlow implements Flow {
 
     boolean pauseFlag = false;
 
-    private void execute() {
+    @Override
+    public void execute() {
         log.info("=== Flow is executing,id={} flowName={},flowStatus={}", id, name, flowStatus.name());
         //TODO update flow status to running
         if (transActionType == FlowTransActionType.NO) {
@@ -139,7 +140,7 @@ public class DefaultFlow implements Flow {
     @Override
     public void start() {
 
-        if (this.flowStatus == FlowStatus.RUNNABLE || this.fLowExecuteStatus == FLowExecuteStatus.PAUSING) {
+        if (this.flowStatus == FlowStatus.NEW || this.fLowExecuteStatus == FLowExecuteStatus.PAUSING) {
             this.fLowExecuteStatus = FLowExecuteStatus.RUNNING;
             this.execute();
         }
