@@ -7,8 +7,6 @@ import com.ssc.ssgm.fx.ifx.integration.core.config.FormatterConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.config.InboundConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.config.KeyMapperConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.config.OutboundConfig;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.FLowExecuteStatus;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.Flow;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowStatus;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowTransActionType;
@@ -89,7 +87,7 @@ public class FlowController {
         List<KeyMapperConfig> keyMapperConfigs = flowContext.getKeyMapperConfigs();
         List<KeyValue> keyValues = keyMapperConfigs.stream().map(e -> {
             KeyValue keyValue = new KeyValue();
-            keyValue.setValue(e.getId());
+            keyValue.setValue(e.getName());
             keyValue.setLabel(e.getName());
             return keyValue;
         }).collect(Collectors.toList());
