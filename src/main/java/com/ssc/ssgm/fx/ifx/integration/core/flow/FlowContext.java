@@ -67,22 +67,47 @@ public class FlowContext implements ApplicationContextAware, InitializingBean {
     }
 
     public void addFlowConfig(FlowConfig flowConfig) {
+        for (FlowConfig config : flowConfigs) {
+            if(  config.getId().equals(flowConfig.getId())){
+                return ;
+            }
+        }
         flowConfigs.add(flowConfig);
     }
 
     public void addFormatterConfig(FormatterConfig formatterConfig) {
+        for (FormatterConfig config : formatterConfigs) {
+            if(  config.getId().equals(formatterConfig.getId())){
+                return ;
+            }
+        }
         formatterConfigs.add(formatterConfig);
     }
 
     public void addKeyMapperConfig(KeyMapperConfig keyMapperConfig) {
+        for (KeyMapperConfig config : keyMapperConfigs) {
+            if(  config.getId().equals(keyMapperConfig.getId())){
+                return ;
+            }
+        }
         keyMapperConfigs.add(keyMapperConfig);
     }
 
     public void addSourceInConfig(InboundConfig inboundConfig) {
+        for (InboundConfig config : inboundConfigs) {
+            if(  config.getId().equals(inboundConfig.getId())){
+                return ;
+            }
+        }
         inboundConfigs.add(inboundConfig);
     }
 
     public void addSourceOutConfig(OutboundConfig outboundConfig) {
+        for (OutboundConfig config : outboundConfigs) {
+            if(  config.getId().equals(outboundConfig.getId())){
+                return ;
+            }
+        }
         outboundConfigs.add(outboundConfig);
     }
 

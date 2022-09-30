@@ -141,9 +141,16 @@ public class JDBCInbound implements Inbound {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.exeContext = new JDBCExeContext();
         exeContext.setExeSql(properties.get("sql").toString());
-        exeContext.setPeriod(properties.get("period").toString());
 
-        ExecutorUtil.getScheduledExecutor().scheduleAtFixedRate(this::run, 10, Long.valueOf(exeContext.getPeriod()), TimeUnit.SECONDS);
+        if("loop".equals(properties.get("period").toString())){
+            exeContext.setPeriod("10");
+            ExecutorUtil.getScheduledExecutor().scheduleAtFixedRate(this::run, 10, Long.valueOf(exeContext.getPeriod()), TimeUnit.SECONDS);
+        }else{
+            ExecutorUtil.getAsyncTaskExecutor().submit(this::run);
+        }
+
+
+
     }
 
     /**

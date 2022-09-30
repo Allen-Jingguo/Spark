@@ -7,6 +7,7 @@ import com.ssc.ssgm.fx.ifx.integration.core.config.FormatterConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.config.InboundConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.config.KeyMapperConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.config.OutboundConfig;
+import com.ssc.ssgm.fx.ifx.integration.core.flow.DefaultFlow;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FLowExecuteStatus;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.Flow;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
@@ -141,7 +142,7 @@ public class FlowController {
     @GetMapping("/list")
     public Response<List<FlowListDTO>> list() {
 
-        //flowContext.loadFlows();
+        flowContext.loadFlows();
 
         List<FlowConfig> flowConfigs = flowContext.getFlowConfigs();
         List<FlowListDTO> collect = flowConfigs.stream().map(e -> {
@@ -192,6 +193,8 @@ public class FlowController {
         String id = UUID.randomUUID().toString().replace("-", "");
         flowConfig.setId(id);
         flowConfig.setCreatedTime(new Date());
+        flowConfig.setFlowStatus(FlowStatus.NEW.name());
+
         if (flowConfigService.addConfig(flowConfig) != 1) {
             return Response.fail();
         }
@@ -205,14 +208,21 @@ public class FlowController {
 
         Flow flow = flowContext.getFLowMap().get(flowDTO.getId());
         if (flow != null) {
-            if (flow.getPersistStatus() == FlowStatus.NEW || flow.getExecuteStatus() == FLowExecuteStatus.TERMINATION) {
+            if (flow.getPersistStatus() == FlowStatus.NEW || flow.getExecuteStatus() == FLowExecuteStatus.PAUSING) {
+
+                flowContext.getFlowConfigs().forEach(e -> {
+                    if (e.getId().equals(flow.getId())) {
+                        flowConfigService.updateStatusByName(e.getName(), FlowStatus.RUNNABLE.name());
+                    }
+                });
+
                 flow.start();
+
                 return Response.success();
             } else {
                 return Response.fail(" Only New Status or Termination of the flow can start ");
             }
         }
-        //flowConfigService.updateFlowStatusByName(flowDTO.getName(), FlowStatus.NEW.name());
         return Response.fail("start fail ");
     }
 
@@ -223,7 +233,8 @@ public class FlowController {
         Flow flow = flowContext.getFLowMap().get(flowDTO.getId());
         if (flow != null) {
             if (flow.getPersistStatus() == FlowStatus.RUNNABLE || flow.getExecuteStatus() == FLowExecuteStatus.RUNNING) {
-                flow.pause();
+                ((DefaultFlow)flow).setFLowExecuteStatus(FLowExecuteStatus.PAUSING);
+                 flow.pause();
                 //flowConfigService.updateFlowStatusByName(flowDTO.getName(), FlowStatus.PAUSE.name());
                 return Response.success();
             } else {

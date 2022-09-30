@@ -1,9 +1,7 @@
 package com.ssc.ssgm.fx.ifx.integration.curd.service;
 
 import com.ssc.ssgm.fx.ifx.integration.core.config.FlowConfig;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.Flow;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowStatus;
 import com.ssc.ssgm.fx.ifx.integration.curd.mapper.FlowConfigMapper;
 import com.ssc.ssgm.fx.ifx.integration.curd.mapper.InboundConfigMapper;
 import com.ssc.ssgm.fx.ifx.integration.curd.mapper.OutboundConfigMapper;
@@ -14,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -101,6 +98,7 @@ public class FlowConfigService {
         FlowConfigExample.Criteria criteria = example.createCriteria();
         criteria.andNameEqualTo(name);
         flowConfigMapper.updateByExampleSelective(flowConfigEntity,example);
+
     }
 
 }
