@@ -4,6 +4,7 @@ package com.ssc.ssgm.fx.ifx.integration.ui.controller;
 import com.ssc.ssgm.fx.ifx.integration.common.Response;
 import com.ssc.ssgm.fx.ifx.integration.core.config.*;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
+import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowStatus;
 import com.ssc.ssgm.fx.ifx.integration.curd.service.FlowConfigService;
 import com.ssc.ssgm.fx.ifx.integration.ui.dto.FlowDTO;
 import io.swagger.annotations.ApiOperation;
@@ -145,18 +146,21 @@ public class FlowController {
     @ApiOperation("start")
     @PostMapping("/start")
     public Response<?> start(@RequestBody FlowDTO flowDTO) {
+        flowConfigService.updateFlowStatusByName(flowDTO.getName(), FlowStatus.NEW.name());
         return Response.success();
     }
 
     @ApiOperation("pause")
     @PostMapping("/pause")
     public Response<?> pause(@RequestBody FlowDTO flowDTO) {
+        flowConfigService.updateFlowStatusByName(flowDTO.getName(), FlowStatus.PAUSE.name());
         return Response.success();
     }
 
     @ApiOperation("stop")
     @PostMapping("/stop")
     public Response<?> stop(@RequestBody FlowDTO flowDTO) {
+        flowConfigService.updateFlowStatusByName(flowDTO.getName(), FlowStatus.TERMINATION.name());
         return Response.success();
     }
 
