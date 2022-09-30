@@ -18,6 +18,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -172,8 +173,12 @@ public class FlowContext implements ApplicationContextAware, InitializingBean {
 
     private Map<String, FormatterConfig> getFlowFormatterConfigs() {
         List<FormatterConfig> configs = this.formatterConfigService.loadAll();
-        Map<String, FormatterConfig> map = configs.stream().collect(Collectors.toMap(e -> e.getId(), e -> e));
-        return map;
+        Map<String, FormatterConfig> result = new HashMap<>();
+        configs.forEach(e->{
+            result.put(e.getId(), e);
+        });
+        //Map<String, FormatterConfig> map = configs.stream().collect(Collectors.toMap(e -> e.getId(), e -> e));
+        return result;
     }
 
     @Override

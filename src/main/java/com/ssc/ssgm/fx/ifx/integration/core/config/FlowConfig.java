@@ -2,22 +2,17 @@ package com.ssc.ssgm.fx.ifx.integration.core.config;
 
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
 public class FlowConfig extends BaseConfig {
 
+    String inboundConfigId;
+    String parserType;
+    String keyMapperId;
+    String formatterId;
+    String outboundConfigId;
 
-    String id;
-    String name;
-    Date createdTime;
-
-    String inboundName;
-    String parserName;
-    String filterName;
-    String keyMapperName;
-    String outboundName;
-
-
+    String transactionType;
+    String flowStatus;
+    String flowType;
 
 }
