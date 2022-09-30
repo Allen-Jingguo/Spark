@@ -111,6 +111,7 @@ declare namespace API {
   };
 
   type FLow = {
+    id?: string;
     name?: string;
     inboundName?: string;
     parserName?: string;
