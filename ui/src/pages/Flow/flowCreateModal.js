@@ -82,10 +82,11 @@ const FlowCreateModal = (props) => {
     flowApi.createNew(values).then((resp) => {
       if (resp.success) {
         message.success('operate successfully!');
+        props.closeCreateModal(true);
       }
        setConfirmLoading(false);
     });
-    
+
   };
 
   return (
@@ -117,8 +118,8 @@ const FlowCreateModal = (props) => {
             </Form.Item>
 
             <Form.Item
-              name="type"
-              label="Flow Type"
+              name="transactionType"
+              label="Transaction"
               //labelAlign="right"
               rules={[{ required: true, message: 'Missing Flow Type' }]}
             >
@@ -126,7 +127,7 @@ const FlowCreateModal = (props) => {
             </Form.Item>
 
             <Form.Item
-              name="inboundName"
+              name="inboundConfigId"
               label="Inbound Name"
               //labelAlign="right"
               rules={[{ required: true, message: 'Missing name' }]}
@@ -144,7 +145,7 @@ const FlowCreateModal = (props) => {
             </Form.Item>
 
             <Form.Item
-              name="keyMapperName"
+              name="keyMapperId"
               label="KeyMapper Name"
               // labelAlign="right"
               rules={[{ required: true, message: 'Missing KeyMapper Name' }]}
@@ -153,7 +154,7 @@ const FlowCreateModal = (props) => {
             </Form.Item>
 
             <Form.Item
-              name="formatterName"
+              name="formatterId"
               label="Formatter Name"
               //labelAlign="right"
               rules={[{ required: true, message: 'Missing Formatter Name' }]}
@@ -162,7 +163,7 @@ const FlowCreateModal = (props) => {
             </Form.Item>
 
             <Form.Item
-              name="outboundName"
+              name="outboundConfigId"
               label="Outbound Name"
               //labelAlign="right"
               rules={[{ required: true, message: 'Missing Outbound Name' }]}
