@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.security.auth.SecurityProtocol;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -40,25 +41,26 @@ public class KafkaOutbound implements OutBound<Object> {
         // address
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, properties.get("bootstrap.servers"));// "localhost:9092"
         // disable retry
-        props.put(ProducerConfig.RETRIES_CONFIG, properties.get("retries"));// 0
-        // full sync
-        props.put(ProducerConfig.ACKS_CONFIG, properties.get("acks"));// all
-        // send() will be blocked when the producer space is not available,default 60s
-        props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, properties.get("max.block.ms"));// 6000
-        // the size batch process is 16384byte
-        props.put(ProducerConfig.BATCH_SIZE_CONFIG, properties.get("batch.size"));// 16384
-        // batch send, delay time is 10 ms, it will improve throughput capacity
-        props.put(ProducerConfig.LINGER_MS_CONFIG, properties.get("linger.ms"));// 10
-        // the record which producer are able to use the total memory
-        props.put(ProducerConfig.BUFFER_MEMORY_CONFIG, properties.get("buffer.memory"));// 40960
-        // the limit size of the message send,default is 1048576
-        props.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, properties.get("max.request.size"));// 1048576
-        // key serializer way
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        // value serializer way
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        // compression type,none,lz4,gzip,snappy,default is none
-        props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, properties.get("compression.type"));// "none"
+//        props.put(ProducerConfig.RETRIES_CONFIG, properties.get("retries"));// 0
+//        // full sync
+//        props.put(ProducerConfig.ACKS_CONFIG, properties.get("acks"));// all
+//        // send() will be blocked when the producer space is not available,default 60s
+//        props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, properties.get("max.block.ms"));// 6000
+//        // the size batch process is 16384byte
+//        props.put(ProducerConfig.BATCH_SIZE_CONFIG, properties.get("batch.size"));// 16384
+//        // batch send, delay time is 10 ms, it will improve throughput capacity
+//        props.put(ProducerConfig.LINGER_MS_CONFIG, properties.get("linger.ms"));// 10
+//        // the record which producer are able to use the total memory
+//        props.put(ProducerConfig.BUFFER_MEMORY_CONFIG, properties.get("buffer.memory"));// 40960
+//        // the limit size of the message send,default is 1048576
+//        props.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, properties.get("max.request.size"));// 1048576
+//        // key serializer way
+//        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+//        // value serializer way
+//        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+//        // compression type,none,lz4,gzip,snappy,default is none
+//        props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, properties.get("compression.type"));// "none"
+        props.put("security.protocol", SecurityProtocol.PLAINTEXT.name);
         topic = properties.get("topic");
 
         DefaultKafkaProducerFactory<String, String> factory = new DefaultKafkaProducerFactory<>(props);

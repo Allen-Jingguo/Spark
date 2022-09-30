@@ -9,6 +9,7 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.common.security.auth.SecurityProtocol;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -51,21 +52,23 @@ public class KafkaInbound implements Inbound {
         // groupId here
         props.put(ConsumerConfig.GROUP_ID_CONFIG, properties.get("group.id"));// "defaultGroup"
         // config if auto commit,default is true
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, Boolean.parseBoolean(properties.get("enable.auto.commit")));// true
-        // auto commit frequency(ms)
-        props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, properties.get("auto.commit.interval.ms"));// 100
-        // session timeout
-        props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, properties.get("session.timeout.ms"));// "15000"
-        // way of key serial
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        // way of value serial
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        // the rule of offset
-        // 1, early: if no offset, begin at 0, if have offset, begin at offset
-        // 2, early: if no offset, begin at data which new produce, if have offset,
-        // begin at offset
-        // 3, none: if no offset, will throw exception, if have offset, begin at offset
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, properties.get("auto.offset.reset"));// "earliest"
+//        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, Boolean.parseBoolean(properties.get("enable.auto.commit")));// true
+//        // auto commit frequency(ms)
+//        props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, properties.get("auto.commit.interval.ms"));// 100
+//        // session timeout
+//        props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, properties.get("session.timeout.ms"));// "15000"
+//        // way of key serial
+//        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+//        // way of value serial
+//        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+//        // the rule of offset
+//        // 1, early: if no offset, begin at 0, if have offset, begin at offset
+//        // 2, early: if no offset, begin at data which new produce, if have offset,
+//        // begin at offset
+//        // 3, none: if no offset, will throw exception, if have offset, begin at offset
+//        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, properties.get("auto.offset.reset"));// "earliest"
+
+        props.put("security.protocol", SecurityProtocol.PLAINTEXT.name);
 
         DefaultKafkaConsumerFactory<String, String> factory = new DefaultKafkaConsumerFactory<String, String>(props);
 

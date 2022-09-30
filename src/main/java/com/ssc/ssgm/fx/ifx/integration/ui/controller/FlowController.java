@@ -197,22 +197,23 @@ public class FlowController {
     @ApiOperation("start")
     @PostMapping("/start")
     public Response<?> start(@RequestBody FlowDTO flowDTO) {
-        flowConfigService.updateFlowStatusByName(flowDTO.getName(), FlowStatus.NEW.name());
+        flowConfigService.updateFlowStatus(flowDTO.getName(), flowDTO.getStatus(), FlowStatus.NEW);
         return Response.success();
     }
 
     @ApiOperation("pause")
     @PostMapping("/pause")
     public Response<?> pause(@RequestBody FlowDTO flowDTO) {
-        flowConfigService.updateFlowStatusByName(flowDTO.getName(), FlowStatus.PAUSE.name());
+        flowConfigService.updateFlowStatus(flowDTO.getName(), flowDTO.getStatus(),  FlowStatus.PAUSE);
         return Response.success();
     }
 
     @ApiOperation("stop")
     @PostMapping("/stop")
     public Response<?> stop(@RequestBody FlowDTO flowDTO) {
-        flowConfigService.updateFlowStatusByName(flowDTO.getName(), FlowStatus.TERMINATION.name());
+        flowConfigService.updateFlowStatus(flowDTO.getName(), flowDTO.getStatus(), FlowStatus.TERMINATION);
         return Response.success();
     }
+
 
 }

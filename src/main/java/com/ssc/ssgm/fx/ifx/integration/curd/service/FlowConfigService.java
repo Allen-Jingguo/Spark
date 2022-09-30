@@ -1,16 +1,26 @@
 package com.ssc.ssgm.fx.ifx.integration.curd.service;
 
 import com.ssc.ssgm.fx.ifx.integration.core.config.FlowConfig;
+import com.ssc.ssgm.fx.ifx.integration.core.config.InboundConfig;
+import com.ssc.ssgm.fx.ifx.integration.core.config.OutboundConfig;
+import com.ssc.ssgm.fx.ifx.integration.core.flow.Flow;
+import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowStatus;
 import com.ssc.ssgm.fx.ifx.integration.curd.mapper.FlowConfigMapper;
+import com.ssc.ssgm.fx.ifx.integration.curd.mapper.InboundConfigMapper;
+import com.ssc.ssgm.fx.ifx.integration.curd.mapper.OutboundConfigMapper;
 import com.ssc.ssgm.fx.ifx.integration.curd.model.FlowConfigEntity;
 import com.ssc.ssgm.fx.ifx.integration.curd.model.FlowConfigExample;
+import com.ssc.ssgm.fx.ifx.integration.curd.model.InboundConfigExample;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +30,15 @@ public class FlowConfigService {
 
     @Autowired
     FlowConfigMapper flowConfigMapper;
+
+    @Autowired
+    InboundConfigMapper inboundConfigMapper;
+
+    @Autowired
+    OutboundConfigMapper outboundConfigMapper;
+
+    @Autowired
+    FlowContext flowContext;
 
     public List<FlowConfig> loadAll() {
 
@@ -45,7 +64,42 @@ public class FlowConfigService {
     }
 
 
-    public void updateFlowStatusByName(String name,String status){
+    @Transactional
+    public void updateFlowStatus(String name,String oldStatus,FlowStatus newStatus){
+
+        /**
+         * find flow
+          */
+        FlowConfigExample example = new FlowConfigExample();
+        FlowConfigExample.Criteria criteria = example.createCriteria();
+        criteria.andNameEqualTo(name);
+        criteria.andFlowStatusEqualTo(oldStatus);
+        List<FlowConfigEntity> flowConfigEntities = flowConfigMapper.selectByExample(example);
+        if (!CollectionUtils.isEmpty(flowConfigEntities)){
+            FlowConfigEntity flowConfig= flowConfigEntities.get(0);
+            List<Flow> flows = flowContext.getFlows().stream().filter(item -> item.getId() == flowConfig.getId()).collect(Collectors.toList());
+            if (!CollectionUtils.isEmpty(flows)){
+                Flow flow = flows.get(0);
+                switch (newStatus){
+                    case NEW: flow.start();
+                    case PAUSE: flow.pause();
+                    case TERMINATION: flow.stop();
+                    default:
+                }
+            }
+        }
+        /**
+         * update in db
+         */
+        updateStatusByName(name, newStatus.name());
+
+
+    }
+    @Transactional
+    public void updateStatusByName(String name, String status) {
+        /**
+         * update flow
+         */
         FlowConfigEntity flowConfigEntity = new FlowConfigEntity();
         flowConfigEntity.setFlowStatus(status);
         FlowConfigExample example = new FlowConfigExample();

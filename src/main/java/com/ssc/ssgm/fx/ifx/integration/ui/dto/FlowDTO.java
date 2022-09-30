@@ -5,5 +5,6 @@ import lombok.Data;
 @Data
 public class FlowDTO {
     String id;
+    String status;
     String name;
 }
