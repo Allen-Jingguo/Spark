@@ -171,7 +171,7 @@ public class FlowContext implements ApplicationContextAware, InitializingBean {
 
         //filter loaded flow
         List<Flow> filteredFlows = defaultFlowList.stream().filter(e -> {
-            return e.getPersistStatus() == FlowStatus.RUNNABLE || !flows.stream().anyMatch(e1 -> e.getId().equals(e1.getId()));
+            return !flows.stream().anyMatch(e1 -> e.getId().equals(e1.getId()));
         }).collect(Collectors.toList());
 
         flows.addAll(filteredFlows);

@@ -95,12 +95,11 @@ public class InboundController {
                 return Response.fail("properties format is not correct ! please check");
             }
             properties+="\n";
-            String prop = "";
             if (inboundConfig.getInboundType() == SourceInTypeEnum.JDBC) {
-                prop += "driver=oracle.jdbc.driver.OracleDriver\n";
-                //url += "url=jdbc:oracle:thin:@//" + "xxx\n";
+                properties += "driver=oracle.jdbc.driver.OracleDriver\n";
                 properties += "sql=" + inboundConfig.getExecuteSql() + "\n";
-                properties += "timer=" + inboundConfig.getTimer() + "\n";
+                properties += "period=" + inboundConfig.getTimer() + "\n";
+                inboundConfig.setProperties(properties);
             }
             //TODO
 

@@ -79,12 +79,13 @@ const FlowCreateModal = (props) => {
 
   const doCreateNewFlow = (values) => {
     setConfirmLoading(true);
-    debugger;
-    message.success('operate successfully!');
-    setTimeout(() => {
-      setConfirmLoading(false);
-      props.closeCreateModal();
-    }, 2000);
+    flowApi.createNew(values).then((resp) => {
+      if (resp.success) {
+        message.success('operate successfully!');
+      }
+       setConfirmLoading(false);
+    });
+    
   };
 
   return (
@@ -121,10 +122,7 @@ const FlowCreateModal = (props) => {
               //labelAlign="right"
               rules={[{ required: true, message: 'Missing Flow Type' }]}
             >
-              <Select
-                options={[ ...allFlowType]}
-                style={{ width: 300 }}
-              />
+              <Select options={[...allFlowType]} style={{ width: 300 }} />
             </Form.Item>
 
             <Form.Item
@@ -133,13 +131,7 @@ const FlowCreateModal = (props) => {
               //labelAlign="right"
               rules={[{ required: true, message: 'Missing name' }]}
             >
-              <Select
-                options={[
-                
-                  ...allInbound,
-                ]}
-                style={{ width: 300 }}
-              />
+              <Select options={[...allInbound]} style={{ width: 300 }} />
             </Form.Item>
 
             <Form.Item
@@ -148,13 +140,7 @@ const FlowCreateModal = (props) => {
               //labelAlign="right"
               rules={[{ required: true, message: 'Missing Parser Type' }]}
             >
-              <Select
-                options={[
-           
-                  ...allParser,
-                ]}
-                style={{ width: 300 }}
-              />
+              <Select options={[...allParser]} style={{ width: 300 }} />
             </Form.Item>
 
             <Form.Item
@@ -163,10 +149,7 @@ const FlowCreateModal = (props) => {
               // labelAlign="right"
               rules={[{ required: true, message: 'Missing KeyMapper Name' }]}
             >
-              <Select
-                options={[ ...allKeyMapper]}
-                style={{ width: 300 }}
-              />
+              <Select options={[...allKeyMapper]} style={{ width: 300 }} />
             </Form.Item>
 
             <Form.Item
@@ -175,12 +158,7 @@ const FlowCreateModal = (props) => {
               //labelAlign="right"
               rules={[{ required: true, message: 'Missing Formatter Name' }]}
             >
-              <Select
-                options={[
-                  ...allFormatter,
-                ]}
-                style={{ width: 300 }}
-              />
+              <Select options={[...allFormatter]} style={{ width: 300 }} />
             </Form.Item>
 
             <Form.Item
@@ -189,12 +167,7 @@ const FlowCreateModal = (props) => {
               //labelAlign="right"
               rules={[{ required: true, message: 'Missing Outbound Name' }]}
             >
-              <Select
-                options={[
-                  ...allOutbound,
-                ]}
-                style={{ width: 300 }}
-              />
+              <Select options={[...allOutbound]} style={{ width: 300 }} />
             </Form.Item>
           </Form>
         </div>

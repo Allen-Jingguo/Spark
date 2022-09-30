@@ -68,17 +68,12 @@ export async function pause(
 }
 
 export async function createNew(
-  params: {
-    name?: string;
-    id?: string;
-  },
+  data:any,
   options?: { [key: string]: any },
 ) {
   return request<any>('/api/flow/create_new', {
     method: 'post',
-    params: {
-      ...params,
-    },
+    data: data,
     ...(options || {}),
   });
 }

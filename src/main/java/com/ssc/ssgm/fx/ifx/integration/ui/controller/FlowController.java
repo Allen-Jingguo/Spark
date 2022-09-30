@@ -136,6 +136,8 @@ public class FlowController {
         String formatterName;
         String keyMapperName;
         String outboundName;
+
+        String  executeStatus;
     }
 
     @ApiOperation("list")
@@ -171,6 +173,7 @@ public class FlowController {
                 dto.setOutboundName(outboundConfigs.get(0).getName());
             }
             dto.setParserName(e.getParserType());
+            dto.setExecuteStatus(e.getFlowStatus());
             return dto;
         }).collect(Collectors.toList());
         return Response.success(collect);

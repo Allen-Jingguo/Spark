@@ -3,6 +3,7 @@ package com.ssc.ssgm.fx.ifx.integration.task;
 
 import com.ssc.ssgm.fx.ifx.integration.core.flow.Flow;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
+import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowStatus;
 import com.ssc.ssgm.fx.ifx.integration.util.ExecutorUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -42,7 +43,9 @@ public class AppTaskExecutor implements ApplicationContextAware, InitializingBea
             if (defaultFlows != null && !defaultFlows.isEmpty()) {
                 defaultFlows.forEach(defaultFlow -> {
                     ExecutorUtil.getAsyncTaskExecutor().submit(() -> {
-                        defaultFlow.start();
+                        if(defaultFlow.getPersistStatus()== FlowStatus.RUNNABLE){
+                            defaultFlow.start();
+                        }
                     });
                 });
             }
@@ -57,7 +60,9 @@ public class AppTaskExecutor implements ApplicationContextAware, InitializingBea
                     fixTimeLoadFlows.forEach(defaultFlow -> {
                         ExecutorUtil.getAsyncTaskExecutor().submit(() -> {
                             try {
-                                defaultFlow.start();
+                                if(defaultFlow.getPersistStatus()== FlowStatus.RUNNABLE){
+                                    defaultFlow.start();
+                                }
                             } catch (Exception e) {
                                 log.error("Exception::", e);
                             }
