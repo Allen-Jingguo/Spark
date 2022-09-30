@@ -74,7 +74,7 @@ export async function createNew(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.FLow>('/api/flow/create_new', {
+  return request<any>('/api/flow/create_new', {
     method: 'post',
     params: {
       ...params,
@@ -84,37 +84,37 @@ export async function createNew(
 }
 
 const getAllInbound = async function () {
-  return request<API.KeyValue>('/api/flow/getAllInbound', {
+  return request<API.KeyValue>('/api/flow/get_inbounds', {
     method: 'GET',
   });
 };
 
 const getAllFlowType = async function () {
-  return request<API.KeyValue>('/api/flow/getAllFlowType', {
+  return request<API.KeyValue>('/api/flow/get_flow_types', {
     method: 'GET',
   });
 };
 
 const getAllParserType = async function () {
-  return request<API.KeyValue>('/api/flow/getAllParserType', {
+  return request<API.KeyValue>('/api/flow/get_parsers', {
     method: 'GET',
   });
 };
 
 const getAllKeyMapper = async function () {
-  return request<API.KeyValue>('/api/flow/getAllKeyMapper', {
+  return request<API.KeyValue>('/api/flow/get_key_mappers', {
     method: 'GET',
   });
 };
 
 const getAllFormatter = async function () {
-  return request<API.KeyValue>('/api/flow/getAllFormatter', {
+  return request<API.KeyValue>('/api/flow/get_formatters', {
     method: 'GET',
   });
 };
 
 const getOutboundName = async function () {
-  return request<API.KeyValue>('/api/flow/getOutboundName', {
+  return request<API.KeyValue>('/api/flow/get_outbounds', {
     method: 'GET',
   });
 };

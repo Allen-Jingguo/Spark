@@ -58,6 +58,14 @@ public class FlowContext implements ApplicationContextAware, InitializingBean {
 
     List<Flow> flows = new CopyOnWriteArrayList<>();
 
+    public Map<String,Flow>  getFLowMap(){
+        Map<String, Flow> result = new HashMap<>();
+        flows.forEach(e->{
+            result.put(e.getId(), e);
+        });
+        return result;
+    }
+
     public void addFlowConfig(FlowConfig flowConfig) {
         flowConfigs.add(flowConfig);
     }
@@ -149,26 +157,49 @@ public class FlowContext implements ApplicationContextAware, InitializingBean {
 
     private Map<String, InboundConfig> getSourceInConfigs() {
         List<InboundConfig> configs = this.inboundConfigService.loadAll();
-        Map<String, InboundConfig> map = configs.stream().collect(Collectors.toMap(e -> e.getId(), e -> e));
-        return map;
+        //Map<String, InboundConfig> map = configs.stream().collect(Collectors.toMap(e -> e.getId(), e -> e));
+
+        Map<String, InboundConfig> result = new HashMap<>();
+        configs.forEach(e->{
+            result.put(e.getId(), e);
+        });
+
+        return result;
     }
 
     private Map<String, FlowConfig> getAllFlowConfigs() {
         List<FlowConfig> configs = this.flowConfigService.loadAll();
-        Map<String, FlowConfig> map = configs.stream().collect(Collectors.toMap(e -> e.getId(), e -> e));
-        return map;
+        //Map<String, FlowConfig> map = configs.stream().collect(Collectors.toMap(e -> e.getId(), e -> e));
+
+        Map<String, FlowConfig> result = new HashMap<>();
+        configs.forEach(e->{
+            result.put(e.getId(), e);
+        });
+        return result;
     }
 
     private Map<String, KeyMapperConfig> getFlowKeyMapperConfigs() {
         List<KeyMapperConfig> configs = this.keyMapperConfigService.loadAll();
-        Map<String, KeyMapperConfig> map = configs.stream().collect(Collectors.toMap(e -> e.getId(), e -> e));
-        return map;
+
+        Map<String, KeyMapperConfig> result = new HashMap<>();
+        configs.forEach(e->{
+            result.put(e.getId(), e);
+        });
+
+        //Map<String, KeyMapperConfig> map = configs.stream().collect(Collectors.toMap(e -> e.getId(), e -> e));
+        return result;
     }
 
     private Map<String, OutboundConfig> getSourceOutConfigs() {
         List<OutboundConfig> configs = this.outboundConfigService.loadAll();
-        Map<String, OutboundConfig> map = configs.stream().collect(Collectors.toMap(e -> e.getId(), e -> e));
-        return map;
+
+        Map<String, OutboundConfig> result = new HashMap<>();
+        configs.forEach(e->{
+            result.put(e.getId(), e);
+        });
+
+        //Map<String, OutboundConfig> map = configs.stream().collect(Collectors.toMap(e -> e.getId(), e -> e));
+        return result;
     }
 
     private Map<String, FormatterConfig> getFlowFormatterConfigs() {

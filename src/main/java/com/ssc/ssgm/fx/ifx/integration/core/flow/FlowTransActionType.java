@@ -5,5 +5,8 @@ public enum FlowTransActionType {
     YES,
     NO
 
+//   TRANSACTION,
+//   NON_TRANSACTION
+
 
 }

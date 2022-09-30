@@ -125,6 +125,11 @@ const OutboundList = () => {
   const [allOutboundType, setAllOutboundType] = useState([]);
 
   useEffect(() => {
+    outboundApi.getList().then((resp) => {
+      if (resp.success) {
+        setTableList(resp.data);
+      }
+    });
     outboundApi.getAllOutboundType().then((resp) => {
       if (resp.success) {
         setAllOutboundType(resp.data);

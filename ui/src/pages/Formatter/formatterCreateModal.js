@@ -49,7 +49,7 @@ const FomatterCreateModal = (props) => {
     fomatterApi.createNew({ ...values }).then((resp) => {
       if (resp.success) {
         message.success('operate successfully!');
-        props.closeCreateModal();
+        props.closeCreateModal(true);
       }
       setConfirmLoading(false);
     });
@@ -88,11 +88,7 @@ const FomatterCreateModal = (props) => {
               rules={[{ required: true, message: 'Missing Outbound Type' }]}
             >
               <Select
-                options={[
-                  { label: 'JOSN', value: 'JOSN' },
-                  { label: 'XML', value: 'XML' },
-                  { label: 'JDBC', value: 'JDBC' },
-                  { label: 'CSV', value: 'CSV' },
+                options={[            
                   ...allFormatterType,
                 ]}
                 style={{ width: 400 }}

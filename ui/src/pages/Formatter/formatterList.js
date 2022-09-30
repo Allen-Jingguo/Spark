@@ -126,7 +126,13 @@ const FormatterList = () => {
   const [tableList, setTableList] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+      fomatterApi.getList().then((resp) => {
+        if (resp.success) {
+          setTableList(resp.data);
+        }
+      });
+  }, []);
 
   const doSearch = (values) => {
     fomatterApi.getList(values).then((resp) => {
@@ -136,7 +142,14 @@ const FormatterList = () => {
     });
   };
 
-  const closeCreateModal = () => {
+  const closeCreateModal = (success) => {
+    if (success) {
+      fomatterApi.getList().then((resp) => {
+        if (resp.success) {
+          setTableList(resp.data);
+        }
+      });
+    }
     setShowCreateModal(false);
   };
 

@@ -154,7 +154,11 @@ const FlowList = () => {
   const [flowList, setFlowList] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+     flowApi.getList().then((resp) => {
+       setFlowList(resp.data);
+     });
+  }, []);
 
   const doSearch = (values) => {
     flowApi.getList(values).then((resp) => {
@@ -162,7 +166,12 @@ const FlowList = () => {
     });
   };
 
-  const closeCreateModal = () => {
+  const closeCreateModal = (success) => {
+    if (success) {
+      flowApi.getList().then((resp) => {
+        setFlowList(resp.data);
+      });
+    }
     setShowCreateModal(false);
   };
 

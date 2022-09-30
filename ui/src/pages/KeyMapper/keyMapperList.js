@@ -106,6 +106,11 @@ const FormatterList = () => {
     keyMapperApi.getAllMapperType().then((resp) => {
       setAllType(resp.data);
     });
+     keyMapperApi.getList({}).then((res) => {
+       if (res.success) {
+         setTableList(res.data);
+       }
+     });
   }, []);
 
   const doSearch = (values) => {

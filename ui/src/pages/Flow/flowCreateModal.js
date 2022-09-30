@@ -43,25 +43,37 @@ const FlowCreateModal = (props) => {
   };
 
   useEffect(() => {
-    flowApi.getAllFlowType().then((data) => {
-      setAllFlowType(data);
+    flowApi.getAllFlowType().then((resp) => {
+      if (resp.success) {
+        setAllFlowType(resp.data);
+      }
     });
 
-    flowApi.getAllInbound().then((data) => {
-      setAllInbound(data);
+    flowApi.getAllInbound().then((resp) => {
+      if (resp.success) {
+        setAllInbound(resp.data);
+      }
     });
 
-    flowApi.getAllParserType().then((data) => {
-      setAllParser(data);
+    flowApi.getAllParserType().then((resp) => {
+      if (resp.success) {
+        setAllParser(resp.data);
+      }
     });
-    flowApi.getAllKeyMapper().then((data) => {
-      setAllKeyMapper(data);
+    flowApi.getAllKeyMapper().then((resp) => {
+      if (resp.success) {
+        setAllKeyMapper(resp.data);
+      }
     });
-    flowApi.getAllFormatter().then((data) => {
-      setAllFormatter(data);
+    flowApi.getAllFormatter().then((resp) => {
+      if (resp.success) {
+        setAllFormatter(resp.data);
+      }
     });
-    flowApi.getOutboundName().then((data) => {
-      setAllOutbound(data);
+    flowApi.getOutboundName().then((resp) => {
+      if (resp.success) {
+        setAllOutbound(resp.data);
+      }
     });
   }, []);
 
@@ -110,7 +122,7 @@ const FlowCreateModal = (props) => {
               rules={[{ required: true, message: 'Missing Flow Type' }]}
             >
               <Select
-                options={[{ label: 'Default', value: 'default' }, ...allFlowType]}
+                options={[ ...allFlowType]}
                 style={{ width: 300 }}
               />
             </Form.Item>
@@ -123,8 +135,7 @@ const FlowCreateModal = (props) => {
             >
               <Select
                 options={[
-                  { label: 'JDBC Inbound', value: 'JDBC Inbound' },
-                  { label: 'Kafka Inbound', value: 'Kafka Inbound' },
+                
                   ...allInbound,
                 ]}
                 style={{ width: 300 }}
@@ -139,10 +150,7 @@ const FlowCreateModal = (props) => {
             >
               <Select
                 options={[
-                  { label: 'JSON', value: 'JSON' },
-                  { label: 'XML', value: 'XML' },
-                  { label: 'KeyValue', value: 'KeyValue' },
-                  { label: 'String', value: 'String' },
+           
                   ...allParser,
                 ]}
                 style={{ width: 300 }}
@@ -156,7 +164,7 @@ const FlowCreateModal = (props) => {
               rules={[{ required: true, message: 'Missing KeyMapper Name' }]}
             >
               <Select
-                options={[{ label: 'Key-Value', value: 'Key-Value' }, ...allKeyMapper]}
+                options={[ ...allKeyMapper]}
                 style={{ width: 300 }}
               />
             </Form.Item>
@@ -169,11 +177,7 @@ const FlowCreateModal = (props) => {
             >
               <Select
                 options={[
-                  { label: 'JSON', value: 'JSON' },
-                  { label: 'XML', value: 'XML' },
-                  { label: 'KeyValue', value: 'KeyValue' },
-                  { label: 'String', value: 'String' },
-                  allFormatter,
+                  ...allFormatter,
                 ]}
                 style={{ width: 300 }}
               />
@@ -187,8 +191,6 @@ const FlowCreateModal = (props) => {
             >
               <Select
                 options={[
-                  { label: 'JDBC Inbound', value: 'JDBC Inbound' },
-                  { label: 'Kafka Inbound', value: 'Kafka Inbound' },
                   ...allOutbound,
                 ]}
                 style={{ width: 300 }}
