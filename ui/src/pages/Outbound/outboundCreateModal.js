@@ -36,8 +36,10 @@ const OutboundCreateModal = (props) => {
   };
 
   useEffect(() => {
-    outboundApi.getAllOutboundType().then((data) => {
-      setAllOutboundType(data);
+    outboundApi.getAllOutboundType().then((resp) => {
+      if (resp.success) {
+        setAllOutboundType(resp.data);
+      }
     });
   }, []);
 
@@ -47,7 +49,7 @@ const OutboundCreateModal = (props) => {
     outboundApi.createNew({ ...values }).then((data) => {
       if (data) {
         message.success('operate successfully!');
-        props.closeCreateModal();
+        props.closeCreateModal(true);
       }
       setConfirmLoading(false);
     });
@@ -81,16 +83,12 @@ const OutboundCreateModal = (props) => {
             </Form.Item>
 
             <Form.Item
-              name="type"
+              name="outboundType"
               label="Outbound Type"
               rules={[{ required: true, message: 'Missing Outbound Type' }]}
             >
               <Select
-                options={[
-                  { label: 'JDBC', value: 'JDBC' },
-                  { label: 'Kafka', value: 'KAFKA' },
-                  ...allOutboundType,
-                ]}
+                options={[...allOutboundType]}
                 style={{ width: 400 }}
                 onChange={(value) => {
                   setSelectOutboundType(value);
@@ -160,7 +158,10 @@ const OutboundCreateModal = (props) => {
               ''
             )}
 
-            <Form.Item name="properties" label="Properties (key=value , Used to initialize Outbound )">
+            <Form.Item
+              name="properties"
+              label="Properties (key=value , Used to initialize Outbound )"
+            >
               <Input.TextArea
                 style={{ width: 400, height: 200 }}
                 showCount

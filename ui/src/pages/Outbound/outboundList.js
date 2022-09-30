@@ -26,11 +26,10 @@ import React, { useState, useEffect } from 'react';
 import outboundApi from '@/services/spark/outboundApi';
 import OutboundCreateModal from '@/pages/Outbound/outboundCreateModal';
 
-
 const view = (record) => {
   outboundApi.view({ ...record }).then((result) => {
     console.log(result);
-    if (result) {
+    if (result.success) {
       message.success('start success!');
     }
   });
@@ -41,7 +40,7 @@ const disable = (record) => {
   console.log(record);
   outboundApi.disable({ ...record }).then((result) => {
     console.log(result);
-    if (result) {
+    if (result.success) {
       message.success('operate successfully!');
     }
   });
@@ -54,11 +53,6 @@ const cancel = (e) => {
 };
 
 const columns = [
-  // {
-  //   title: 'Id',
-  //   dataIndex: 'id',
-  //   disable: true,
-  // },
   {
     title: 'Name',
     dataIndex: 'name',
@@ -68,7 +62,7 @@ const columns = [
 
   {
     title: 'Type',
-    dataIndex: 'type',
+    dataIndex: 'outboundType',
   },
 
   {
@@ -81,10 +75,10 @@ const columns = [
     dataIndex: 'userName',
   },
 
-  {
-    title: 'Password',
-    dataIndex: 'password',
-  },
+  // {
+  //   title: 'Password',
+  //   dataIndex: 'password',
+  // },
 
   {
     title: 'Created Time',
@@ -124,45 +118,36 @@ const columns = [
   },
 ];
 
-const data = [
-  {
-    key: '1',
-    id: '1',
-    name: 'Ord  Extract Static Data Flow',
-    inboundName: 'Ord JDBC Inbound Name',
-    parserName: 'JDBCParser',
-    filterName: 'NA',
-    keyMapperName: 'KeyValueMapper',
-    formatterName: 'JDBCFormatter',
-    outboundName: 'WSS JDBC Oubound Name',
-  },
-  {
-    key: '2',
-    id: '2',
-    name: 'SDR Static Data Flow',
-    inboundName: 'SDR JDBC Inbound Name',
-    parserName: 'JDBCParser',
-    filterName: 'NA',
-    keyMapperName: 'KeyValueMapper',
-    formatterName: 'NA',
-    outboundName: 'Ord JDBC Oubound Name',
-  },
-];
-
 const OutboundList = () => {
   const [form] = Form.useForm();
-  const [tableList, setTableList] = useState(data);
+  const [tableList, setTableList] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [allOutboundType, setAllOutboundType] = useState([]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    outboundApi.getAllOutboundType().then((resp) => {
+      if (resp.success) {
+        setAllOutboundType(resp.data);
+      }
+    });
+  }, []);
 
   const doSearch = (values) => {
-    outboundApi.getList(values).then((datas) => {
-      setTableList(flowList);
+    outboundApi.getList(values).then((resp) => {
+      if (resp.success) {
+        setTableList(resp.data);
+      }
     });
   };
 
-  const closeCreateModal = () => {
+  const closeCreateModal = (success) => {
+    if (success) {
+      outboundApi.getList().then((resp) => {
+        if (resp.success) {
+          setTableList(resp.data);
+        }
+      });
+    }
     setShowCreateModal(false);
   };
 
@@ -189,20 +174,14 @@ const OutboundList = () => {
                 <Form.Item
                   name="name"
                   label="Name"
-                  rules={[{ required: true, message: 'Missing name' }]}
+                  // rules={[{ required: true, message: 'Missing name' }]}
                 >
                   <Input />
                 </Form.Item>
               </Col>
               <Col>
                 <Form.Item name="type" label="Type">
-                  <Select
-                    options={[
-                      { label: 'Default', value: 'default' },
-                      { label: 'Transation', value: 'Transation' },
-                    ]}
-                    style={{ width: 150 }}
-                  />
+                  <Select options={allOutboundType} style={{ width: 150 }} />
                 </Form.Item>
               </Col>
 

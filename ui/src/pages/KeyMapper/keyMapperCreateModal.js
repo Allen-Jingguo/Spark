@@ -48,7 +48,7 @@ const KeyMapperCreateModal = (props) => {
     keyMapperApi.createNew({ ...values }).then((resp) => {
       if (resp.success) {
         message.success('operate successfully!');
-        props.closeCreateModal();
+        props.closeCreateModal(true);
       }
       setConfirmLoading(false);
     });
@@ -98,7 +98,7 @@ const KeyMapperCreateModal = (props) => {
                 showCount
                 placeholder="input  template text "
               />
-              <div style={{ fontSize: 15, marginTop: 10 }}> OR </div>
+              {/* <div style={{ fontSize: 15, marginTop: 10 }}> OR </div> */}
             </Form.Item>
 
             <Form.Item label="Upload" valuePropName="fileList">

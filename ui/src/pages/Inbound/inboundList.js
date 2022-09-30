@@ -67,7 +67,7 @@ const columns = [
 
   {
     title: 'Type',
-    dataIndex: 'type',
+    dataIndex: 'inboundType',
   },
 
   {
@@ -79,11 +79,6 @@ const columns = [
     title: 'User Name',
     dataIndex: 'userName',
   },
-
-  // {
-  //   title: 'Password',
-  //   dataIndex: 'password',
-  // },
 
   {
     title: 'Created Time',
@@ -123,45 +118,41 @@ const columns = [
   },
 ];
 
-const data = [
-  {
-    key: '1',
-    id: '1',
-    name: 'Ord  Extract Static Data Flow',
-    inboundName: 'Ord JDBC Inbound Name',
-    parserName: 'JDBCParser',
-    filterName: 'NA',
-    keyMapperName: 'KeyValueMapper',
-    formatterName: 'JDBCFormatter',
-    outboundName: 'WSS JDBC Oubound Name',
-  },
-  {
-    key: '2',
-    id: '2',
-    name: 'SDR Static Data Flow',
-    inboundName: 'SDR JDBC Inbound Name',
-    parserName: 'JDBCParser',
-    filterName: 'NA',
-    keyMapperName: 'KeyValueMapper',
-    formatterName: 'NA',
-    outboundName: 'Ord JDBC Oubound Name',
-  },
-];
-
 const InboundList = () => {
   const [form] = Form.useForm();
-  const [tableList, setTableList] = useState(data);
+  const [tableList, setTableList] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
+   const [allInboundType, setAllInboundType] = useState([]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+     inboundApi.getAllInboundType().then((resp) => {
+       if (resp.success) {
+         setAllInboundType(resp.data);
+       }
+     });
+    inboundApi.getList({}).then((res) => {
+      if (res) {
+        setTableList(res.data);
+      }
+    });
+  }, []);
 
   const doSearch = (values) => {
-    inboundApi.getList(values).then((datas) => {
-      setTableList(flowList);
+    inboundApi.getList(values).then((res) => {
+      if (res) {
+        setTableList(res.data);
+      }
     });
   };
 
-  const closeCreateModal = () => {
+  const closeCreateModal = (success) => {
+    if (success) {
+      inboundApi.getList({}).then((res) => {
+        if (res) {
+          setTableList(res.data);
+        }
+      });
+    }
     setShowCreateModal(false);
   };
 
@@ -188,20 +179,14 @@ const InboundList = () => {
                 <Form.Item
                   name="name"
                   label="Name"
-                  rules={[{ required: true, message: 'Missing name' }]}
+                  // rules={[{ required: true, message: 'Missing name' }]}
                 >
                   <Input />
                 </Form.Item>
               </Col>
               <Col>
                 <Form.Item name="type" label="Type">
-                  <Select
-                    options={[
-                      { label: 'Default', value: 'default' },
-                      { label: 'Transation', value: 'Transation' },
-                    ]}
-                    style={{ width: 150 }}
-                  />
+                  <Select options={allInboundType} style={{ width: 150 }} />
                 </Form.Item>
               </Col>
 

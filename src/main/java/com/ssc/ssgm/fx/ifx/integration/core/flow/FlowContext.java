@@ -86,6 +86,7 @@ public class FlowContext implements ApplicationContextAware, InitializingBean {
     public void removeSourceInConfig(String id) { inboundConfigs.removeIf(inboundConfig->{ return inboundConfig.getId().equals(id);});}
 
     public void removeSourceOutConfig(String id) { outboundConfigs.removeIf(outboundConfig->{ return outboundConfig.getId().equals(id);});}
+
     public List<Flow> loadFlows() {
 
         // load  config

@@ -11,7 +11,7 @@ const getList = async function (
 ) {
   return request<any>('/api/mapper/list', {
     method: 'POST',
-    params: {
+    data: {
       ...params,
     },
     ...(options || {}),
@@ -21,7 +21,7 @@ const getList = async function (
 export async function createNew(params: any, options?: { [key: string]: any }) {
   return request<any>('/api/mapper/create_new', {
     method: 'POST',
-    params: {
+    data: {
       ...params,
     },
     ...(options || {}),

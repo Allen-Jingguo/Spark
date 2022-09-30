@@ -3,16 +3,16 @@
 import { request } from '@umijs/max';
 
 const getList = async function (
-  params: {
+  data: {
     name: string;
     type?: string;
   },
   options?: { [key: string]: any },
 ) {
   return request<any>('/api/formatter/list', {
-    method: 'GET',
-    params: {
-      ...params,
+    method: 'POST',
+    data: {
+      ...data,
     },
     ...(options || {}),
   });
@@ -21,7 +21,7 @@ const getList = async function (
 export async function createNew(params: any, options?: { [key: string]: any }) {
   return request<any>('/api/formatter/create_new', {
     method: 'post',
-    params: {
+    data: {
       ...params,
     },
     ...(options || {}),

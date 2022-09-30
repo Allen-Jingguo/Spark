@@ -4,20 +4,26 @@ package com.ssc.ssgm.fx.ifx.integration.ui.controller;
 import com.ssc.ssgm.fx.ifx.integration.common.Response;
 import com.ssc.ssgm.fx.ifx.integration.core.config.InboundConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
+import com.ssc.ssgm.fx.ifx.integration.core.inbound.SourceInTypeEnum;
 import com.ssc.ssgm.fx.ifx.integration.curd.service.InboundConfigService;
-
+import com.ssc.ssgm.fx.ifx.integration.util.KeyValueConfigLoadUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import com.ssc.ssgm.fx.ifx.integration.core.inbound.SourceInTypeEnum;
 
 @RestController
 @RequestMapping(value = "/api/inbound")
@@ -48,7 +54,20 @@ public class InboundController {
     @GetMapping("/list")
     public Response<List<InboundConfig>> list() {
         List<InboundConfig> inboundConfigList = inboundConfigService.loadAll();
-        flowContext.setInboundConfigs(inboundConfigList);
+        //flowContext.setInboundConfigs(inboundConfigList);
+
+        inboundConfigList.forEach(e->{
+            Map<String, String> map = KeyValueConfigLoadUtil.loadConfig(e.getProperties());
+            e.setHostName("NA");
+            e.setUserName("NA");
+            if(map.get("HostName")!=null){
+                e.setHostName(map.get("HostName"));
+            }
+            if(map.get("UserName")!=null){
+                e.setUserName(map.get("HostName"));
+            }
+        });
+
         return Response.success(inboundConfigList);
     }
 
@@ -64,10 +83,29 @@ public class InboundController {
     }
 
     @ApiOperation("create")
-    @PostMapping("/create")
-    public Response<?> create(@RequestParam("inboundConfig") InboundConfig inboundConfig) {
+    @PostMapping("/create_new")
+    public Response<?> create(@RequestBody InboundConfig inboundConfig) {
         String id = UUID.randomUUID().toString().replace("-","");
         inboundConfig.setId(id);
+        inboundConfig.setCreatedTime(new Date());
+        String properties = inboundConfig.getProperties();
+        if (StringUtils.isNoneBlank(properties)) {
+            Map<String, String> stringMap = KeyValueConfigLoadUtil.loadConfig(properties);
+            if (stringMap.isEmpty()) {
+                return Response.fail("properties format is not correct ! please check");
+            }
+            properties+="\n";
+            String prop = "";
+            if (inboundConfig.getInboundType() == SourceInTypeEnum.JDBC) {
+                prop += "driver=oracle.jdbc.driver.OracleDriver\n";
+                //url += "url=jdbc:oracle:thin:@//" + "xxx\n";
+                properties += "sql=" + inboundConfig.getExecuteSql() + "\n";
+                properties += "timer=" + inboundConfig.getTimer() + "\n";
+            }
+            //TODO
+
+        }
+
         if(inboundConfigService.addConfig(inboundConfig) !=1){
             log.error("Inbound config creation failed.");
             return Response.fail();

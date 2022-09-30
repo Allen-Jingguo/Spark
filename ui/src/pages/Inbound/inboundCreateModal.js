@@ -37,18 +37,20 @@ const InboundCreateModal = (props) => {
   };
 
   useEffect(() => {
-    inboundApi.getAllInboundType().then((data) => {
-      setAllInboundType(data);
+    inboundApi.getAllInboundType().then((resp) => {
+      if (resp.success) {
+        setAllInboundType(resp.data);
+      }
     });
   }, []);
 
   const doCreateNew = (values) => {
     setConfirmLoading(true);
 
-    inboundApi.createNew({ ...values }).then((data) => {
-      if (data) {
+    inboundApi.createNew({ ...values }).then((resp) => {
+      if (resp.success) {
         message.success('operate successfully!');
-        props.closeCreateModal();
+        props.closeCreateModal(true);
       }
       setConfirmLoading(false);
     });
@@ -82,16 +84,12 @@ const InboundCreateModal = (props) => {
             </Form.Item>
 
             <Form.Item
-              name="type"
+              name="inboundType"
               label="Inbound Type"
               rules={[{ required: true, message: 'Missing Outbound Type' }]}
             >
               <Select
-                options={[
-                  { label: 'JDBC', value: 'JDBC' },
-                  { label: 'Kafka', value: 'KAFKA' },
-                  ...allInboundType,
-                ]}
+                options={allInboundType}
                 style={{ width: 400 }}
                 onChange={(value) => {
                   setSelectInboundType(value);
@@ -184,7 +182,10 @@ const InboundCreateModal = (props) => {
               ''
             )}
 
-            <Form.Item name="properties" label="Properties (key=value , Used to initialize inbound )">
+            <Form.Item
+              name="properties"
+              label="Properties (key=value , Used to initialize inbound )"
+            >
               <Input.TextArea
                 style={{ width: 400, height: 200 }}
                 showCount

@@ -45,7 +45,10 @@ public class KeyMapperConfigService {
 
         KeyMapperConfigExample inboundConfigExample = new KeyMapperConfigExample();
         KeyMapperConfigExample.Criteria criteria = inboundConfigExample.createCriteria();
-        criteria.andNameEqualTo(mapperDTO.getName().trim());
+        if(mapperDTO.getType() != null){
+            criteria.andNameEqualTo(mapperDTO.getName().trim());
+        }
+
         if (mapperDTO.getType() != null) {
             criteria.andKeyMapperTypeEqualTo(mapperDTO.getType());
         }

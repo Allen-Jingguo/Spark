@@ -31,7 +31,7 @@ const confirm = (record, type) => {
   if ('start' === type) {
     flowApi.start({ ...record }).then((result) => {
       console.log(result);
-      if (result) {
+      if (result.success) {
         message.success('start success!');
       }
     });
@@ -40,7 +40,7 @@ const confirm = (record, type) => {
   if ('pause' === type) {
     flowApi.pause({ ...record }).then((result) => {
       console.log(result);
-      if (result) {
+      if (result.success) {
         message.success('pause success!');
       }
     });
@@ -49,7 +49,7 @@ const confirm = (record, type) => {
   if ('stop' === type) {
     flowApi.stop({ ...record }).then((result) => {
       console.log(result);
-      if (result) {
+      if (result.success) {
         message.success('Request received, flow is stopping, Please check the status later !');
       }
     });
@@ -62,11 +62,6 @@ const cancel = (e) => {
 };
 
 const columns = [
-  // {
-  //   title: 'Id',
-  //   dataIndex: 'id',
-  //   disable: true,
-  // },
   {
     title: 'Name',
     dataIndex: 'name',
@@ -154,43 +149,17 @@ const columns = [
   },
 ];
 
-const data = [
-  {
-    key: '1',
-    id: '1',
-    name: 'Ord  Extract Static Data Flow',
-    inboundName: 'Ord JDBC Inbound Name',
-    parserName: 'JDBCParser',
-    filterName: 'NA',
-    keyMapperName: 'KeyValueMapper',
-    formatterName: 'JDBCFormatter',
-    outboundName: 'WSS JDBC Oubound Name',
-  },
-  {
-    key: '2',
-    id: '2',
-    name: 'SDR Static Data Flow',
-    inboundName: 'SDR JDBC Inbound Name',
-    parserName: 'JDBCParser',
-    filterName: 'NA',
-    keyMapperName: 'KeyValueMapper',
-    formatterName: 'NA',
-    outboundName: 'Ord JDBC Oubound Name',
-  },
-];
-
 const FlowList = () => {
   const [form] = Form.useForm();
-  const [flowList, setFlowList] = useState(data);
-
+  const [flowList, setFlowList] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {}, []);
 
   const doSearch = (values) => {
-    //const fields=form.getFieldsValue();
-    const flowList = getList(values);
-    setFlowList(flowList);
+    flowApi.getList(values).then((resp) => {
+      setFlowList(resp.data);
+    });
   };
 
   const closeCreateModal = () => {
@@ -225,7 +194,7 @@ const FlowList = () => {
                 <Form.Item
                   name="name"
                   label="Name"
-                  rules={[{ required: true, message: 'Missing name' }]}
+                  // rules={[{ required: true, message: 'Missing name' }]}
                 >
                   <Input />
                 </Form.Item>
@@ -271,7 +240,7 @@ const FlowList = () => {
                 </Button>
                 <Button
                   style={{ marginLeft: 10 }}
-                  //type="primary"
+                  type="primary"
                   onClick={() => {
                     form.resetFields();
                   }}
@@ -280,7 +249,7 @@ const FlowList = () => {
                 </Button>
                 <Button
                   style={{ marginLeft: 10 }}
-                  //type="primary"
+                  type="primary"
                   onClick={() => {
                     setShowCreateModal(true);
                   }}

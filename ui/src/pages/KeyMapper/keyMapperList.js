@@ -96,45 +96,34 @@ const columns = [
   },
 ];
 
-const data = [
-  {
-    key: '1',
-    id: '1',
-    name: 'Ord  Extract Static Data Flow',
-    inboundName: 'Ord JDBC Inbound Name',
-    parserName: 'JDBCParser',
-    filterName: 'NA',
-    keyMapperName: 'KeyValueMapper',
-    formatterName: 'JDBCFormatter',
-    outboundName: 'WSS JDBC Oubound Name',
-  },
-  {
-    key: '2',
-    id: '2',
-    name: 'SDR Static Data Flow',
-    inboundName: 'SDR JDBC Inbound Name',
-    parserName: 'JDBCParser',
-    filterName: 'NA',
-    keyMapperName: 'KeyValueMapper',
-    formatterName: 'NA',
-    outboundName: 'Ord JDBC Oubound Name',
-  },
-];
-
 const FormatterList = () => {
   const [form] = Form.useForm();
-  const [tableList, setTableList] = useState(data);
+  const [tableList, setTableList] = useState([]);
+  const [allType, setAllType] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    keyMapperApi.getAllMapperType().then((resp) => {
+      setAllType(resp.data);
+    });
+  }, []);
 
   const doSearch = (values) => {
-    keyMapperApi.getList(values).then((datas) => {
-      setTableList(flowList);
+    keyMapperApi.getList(values).then((res) => {
+      if (res.success) {
+        setTableList(res.data);
+      }
     });
   };
 
-  const closeCreateModal = () => {
+  const closeCreateModal = (success) => {
+    if (success) {
+      keyMapperApi.getList({}).then((res) => {
+        if (res.success) {
+          setTableList(res.data);
+        }
+      });
+    }
     setShowCreateModal(false);
   };
 
@@ -161,20 +150,14 @@ const FormatterList = () => {
                 <Form.Item
                   name="name"
                   label="Namey"
-                  rules={[{ required: true, message: 'Missing name' }]}
+                  // rules={[{ required: true, message: 'Missing name' }]}
                 >
                   <Input />
                 </Form.Item>
               </Col>
               <Col>
                 <Form.Item name="type" label="Type">
-                  <Select
-                    options={[
-                      { label: 'Default', value: 'default' },
-                      { label: 'Transation', value: 'Transation' },
-                    ]}
-                    style={{ width: 150 }}
-                  />
+                  <Select options={allType} style={{ width: 150 }} />
                 </Form.Item>
               </Col>
 

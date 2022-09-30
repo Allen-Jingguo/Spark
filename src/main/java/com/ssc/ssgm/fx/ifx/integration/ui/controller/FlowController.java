@@ -2,24 +2,32 @@
 package com.ssc.ssgm.fx.ifx.integration.ui.controller;
 
 import com.ssc.ssgm.fx.ifx.integration.common.Response;
-import com.ssc.ssgm.fx.ifx.integration.core.config.*;
+import com.ssc.ssgm.fx.ifx.integration.core.config.FlowConfig;
+import com.ssc.ssgm.fx.ifx.integration.core.config.FormatterConfig;
+import com.ssc.ssgm.fx.ifx.integration.core.config.InboundConfig;
+import com.ssc.ssgm.fx.ifx.integration.core.config.KeyMapperConfig;
+import com.ssc.ssgm.fx.ifx.integration.core.config.OutboundConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowStatus;
+import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowTransActionType;
+import com.ssc.ssgm.fx.ifx.integration.core.parser.ParserEnum;
 import com.ssc.ssgm.fx.ifx.integration.curd.service.FlowConfigService;
 import com.ssc.ssgm.fx.ifx.integration.ui.dto.FlowDTO;
 import io.swagger.annotations.ApiOperation;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowTransActionType;
-import com.ssc.ssgm.fx.ifx.integration.core.parser.ParserEnum;
 
 @RestController
 @RequestMapping(value = "/api/flow")
@@ -112,30 +120,48 @@ public class FlowController {
         return Response.success(outbounds);
     }
 
+    @Data
+    class FlowListDTO{
+
+        String inboundConfigId;
+        String parserType;
+        String keyMapperId;
+        String formatterId;
+        String outboundConfigId;
+
+        String transactionType;
+        String flowStatus;
+        String flowType;
+    }
+
     @ApiOperation("list")
     @GetMapping("/list")
     public Response<List<FlowConfig>> list() {
         flowContext.loadFlows();
         List<FlowConfig> flowConfigs = flowContext.getFlowConfigs();
+
+
+
         return Response.success(flowConfigs);
     }
 
     @ApiOperation("disable")
     @GetMapping("/disable")
-    public Response<?> disable(@RequestParam("id") Long id) {
-        if (flowConfigService.disableConfig(id) != 1) {
-            log.error("Disable config failed. No FLow config found with ID {} .",id);
+    public Response<?> disable(@RequestBody FlowConfig config) {
+        if (flowConfigService.disableConfig(Long.valueOf(config.getId())) != 1) {
+            log.error("Disable config failed. No FLow config found with ID {} .",config.getId());
             return Response.fail();
         }
-        flowContext.removeFlowConfig(Long.toString(id));
+        flowContext.removeFlowConfig(config.getId());
         return Response.success();
     }
 
     @ApiOperation("create")
-    @GetMapping("/create")
-    public Response<?> create(@RequestParam("flowConfig") FlowConfig flowConfig) {
+    @PostMapping("/create_new")
+    public Response<?> create(@RequestBody FlowConfig flowConfig) {
         String id = UUID.randomUUID().toString().replace("-","");
         flowConfig.setId(id);
+        flowConfig.setCreatedTime(new Date());
         if ( flowConfigService.addConfig(flowConfig) !=1){
                 return Response.fail();
         }

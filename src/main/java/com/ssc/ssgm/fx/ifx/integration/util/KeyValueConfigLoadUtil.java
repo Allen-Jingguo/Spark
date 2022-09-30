@@ -14,18 +14,21 @@ public class KeyValueConfigLoadUtil {
 
     public static Map<String, String> loadConfig(String text) {
 
-        Map<String, String> configMap = new HashMap<>();
-        final val properties = new Properties();
-
+        final Map<String, String> configMap = new HashMap<>();
         try {
-            properties.load(new StringReader(text));
-        } catch (IOException e) {
-            log.error("IOException::", e);
-        }
+            final val properties = new Properties();
+            try {
+                properties.load(new StringReader(text));
+            } catch (IOException e) {
+                log.error("IOException::", e);
+            }
 
-        properties.forEach((key, value) -> {
-            configMap.put(key.toString(), value.toString());
-        });
+            properties.forEach((key, value) -> {
+                configMap.put(key.toString(), value.toString());
+            });
+        } catch (Exception e) {
+           log.error("Exception::",e);
+        }
 
         return configMap;
     }

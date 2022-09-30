@@ -4,13 +4,13 @@ import { request } from '@umijs/max';
 
 const getList = async function (
   params: {
-    name: string;
+    name?: string;
     stauts?: string;
     type?: string;
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.FLow>('/api/flow/list', {
+  return request<any>('/api/flow/list', {
     method: 'GET',
     params: {
       ...params,

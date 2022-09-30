@@ -67,7 +67,7 @@ const columns = [
 
   {
     title: 'Type',
-    dataIndex: 'type',
+    dataIndex: 'formatterType',
   },
 
   {
@@ -123,14 +123,16 @@ const data = [
 
 const FormatterList = () => {
   const [form] = Form.useForm();
-  const [tableList, setTableList] = useState(data);
+  const [tableList, setTableList] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {}, []);
 
   const doSearch = (values) => {
-    fomatterApi.getList(values).then((datas) => {
-      setTableList(flowList);
+    fomatterApi.getList(values).then((resp) => {
+      if (resp.success) {
+        setTableList(resp.data);
+      }
     });
   };
 
@@ -161,7 +163,7 @@ const FormatterList = () => {
                 <Form.Item
                   name="name"
                   label="Name"
-                  rules={[{ required: true, message: 'Missing name' }]}
+                  // rules={[{ required: true, message: 'Missing name' }]}
                 >
                   <Input />
                 </Form.Item>

@@ -4,7 +4,7 @@ import { request } from '@umijs/max';
 
 const getList = async function (
   params: {
-    name: string;
+    name?: string;
     type?: string;
   },
   options?: { [key: string]: any },
@@ -21,7 +21,7 @@ const getList = async function (
 export async function createNew(params: any, options?: { [key: string]: any }) {
   return request<any>('/api/inbound/create_new', {
     method: 'post',
-    params: {
+    data: {
       ...params,
     },
     ...(options || {}),
@@ -29,7 +29,7 @@ export async function createNew(params: any, options?: { [key: string]: any }) {
 }
 
 const getAllInboundType = async function () {
-  return request<API.KeyValue>('/api/inbound/get_all_inbound_type', {
+  return request<API.KeyValue>('/api/inbound/get_types', {
     method: 'GET',
   });
 };

@@ -37,16 +37,17 @@ const FomatterCreateModal = (props) => {
   };
 
   useEffect(() => {
-    fomatterApi.getAllFormatterType().then((data) => {
-      setAllFormatterType(data);
+    fomatterApi.getAllFormatterType().then((resp) => {
+      if (resp.success) {
+        setAllFormatterType(resp.data);
+      }
     });
   }, []);
 
   const doCreateNew = (values) => {
     setConfirmLoading(true);
-
-    fomatterApi.createNew({ ...values }).then((data) => {
-      if (data) {
+    fomatterApi.createNew({ ...values }).then((resp) => {
+      if (resp.success) {
         message.success('operate successfully!');
         props.closeCreateModal();
       }
@@ -82,7 +83,7 @@ const FomatterCreateModal = (props) => {
             </Form.Item>
 
             <Form.Item
-              name="type"
+              name="formatterType"
               label="Formatter Type"
               rules={[{ required: true, message: 'Missing Outbound Type' }]}
             >
@@ -108,7 +109,7 @@ const FomatterCreateModal = (props) => {
                 showCount
                 placeholder="input  template text "
               />
-              <div style={{ fontSize: 15, marginTop: 10 }}> OR </div>
+              {/* <div style={{ fontSize: 15, marginTop: 10 }}> OR </div> */}
             </Form.Item>
 
             <Form.Item label="Upload Template" valuePropName="fileList">

@@ -21,7 +21,7 @@ const getList = async function (
 export async function createNew(params: any, options?: { [key: string]: any }) {
   return request<any>('/api/outbound/create_new', {
     method: 'post',
-    params: {
+    data: {
       ...params,
     },
     ...(options || {}),
@@ -29,7 +29,7 @@ export async function createNew(params: any, options?: { [key: string]: any }) {
 }
 
 const getAllOutboundType = async function () {
-  return request<API.KeyValue>('/api/outbound/get_all_outbound_type', {
+  return request<API.KeyValue>('/api/outbound/get_types', {
     method: 'GET',
   });
 };
@@ -56,7 +56,7 @@ const disable = async function (
   options?: { [key: string]: any },
 ) {
   return request<any>('/api/outbound/disable', {
-    method: 'GET',
+    method: 'post',
     params: {
       ...params,
     },
