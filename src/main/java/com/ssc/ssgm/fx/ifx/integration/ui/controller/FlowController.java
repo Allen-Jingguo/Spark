@@ -7,9 +7,7 @@ import com.ssc.ssgm.fx.ifx.integration.core.config.FormatterConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.config.InboundConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.config.KeyMapperConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.config.OutboundConfig;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowStatus;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowTransActionType;
+import com.ssc.ssgm.fx.ifx.integration.core.flow.*;
 import com.ssc.ssgm.fx.ifx.integration.core.parser.ParserEnum;
 import com.ssc.ssgm.fx.ifx.integration.curd.service.FlowConfigService;
 import com.ssc.ssgm.fx.ifx.integration.ui.dto.FlowDTO;
@@ -240,7 +238,7 @@ public class FlowController {
         if (flow != null) {
             if (flow.getPersistStatus() == FlowStatus.RUNNABLE && flow.getExecuteStatus() == FLowExecuteStatus.RUNNING) {
                 flow.stop();
-                flowConfigService.updateFlowStatusByName(flowDTO.getName(), FlowStatus.TERMINATION.name());
+                flowConfigService.updateFlowStatus(flowDTO.getName(), FlowStatus.TERMINATION.name());
                 return Response.success();
             } else {
                 return Response.fail(" Only Running status of the flow can stop ");
