@@ -60,33 +60,33 @@ public class FlowConfigService {
 
 
     @Transactional
-    public void updateFlowStatus(String name,String oldStatus,FlowStatus newStatus){
+    public void updateFlowStatus(String name,String newStatus){
 
-        /**
-         * find flow
-          */
-        FlowConfigExample example = new FlowConfigExample();
-        FlowConfigExample.Criteria criteria = example.createCriteria();
-        criteria.andNameEqualTo(name);
-        criteria.andFlowStatusEqualTo(oldStatus);
-        List<FlowConfigEntity> flowConfigEntities = flowConfigMapper.selectByExample(example);
-        if (!CollectionUtils.isEmpty(flowConfigEntities)){
-            FlowConfigEntity flowConfig= flowConfigEntities.get(0);
-            List<Flow> flows = flowContext.getFlows().stream().filter(item -> item.getId() == flowConfig.getId()).collect(Collectors.toList());
-            if (!CollectionUtils.isEmpty(flows)){
-                Flow flow = flows.get(0);
-                switch (newStatus){
-                    case NEW: flow.start();
-                    case PAUSE: flow.pause();
-                    case TERMINATION: flow.stop();
-                    default:
-                }
-            }
-        }
+//        /**
+//         * find flow
+//          */
+//        FlowConfigExample example = new FlowConfigExample();
+//        FlowConfigExample.Criteria criteria = example.createCriteria();
+//        criteria.andNameEqualTo(name);
+//        criteria.andFlowStatusEqualTo(oldStatus);
+//        List<FlowConfigEntity> flowConfigEntities = flowConfigMapper.selectByExample(example);
+//        if (!CollectionUtils.isEmpty(flowConfigEntities)){
+//            FlowConfigEntity flowConfig= flowConfigEntities.get(0);
+//            List<Flow> flows = flowContext.getFlows().stream().filter(item -> item.getId() == flowConfig.getId()).collect(Collectors.toList());
+//            if (!CollectionUtils.isEmpty(flows)){
+//                Flow flow = flows.get(0);
+//                switch (newStatus){
+//                    case NEW: flow.start();
+//                    case PAUSE: flow.pause();
+//                    case TERMINATION: flow.stop();
+//                    default:
+//                }
+//            }
+//        }
         /**
          * update in db
          */
-        updateStatusByName(name, newStatus.name());
+        updateStatusByName(name, newStatus);
 
 
     }
