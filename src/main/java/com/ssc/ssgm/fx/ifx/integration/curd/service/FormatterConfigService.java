@@ -39,4 +39,8 @@ public class FormatterConfigService {
         entity.setFormatterType(formatterConfig.getFormatterType().name());
         formatterConfigMapper.insert(entity);
     }
+
+    public void disableConfig(String id) {
+        formatterConfigMapper.deleteById(id);
+    }
 }

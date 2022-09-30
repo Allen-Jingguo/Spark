@@ -1,10 +1,11 @@
 package com.ssc.ssgm.fx.ifx.integration.curd.mapper;
 
-import java.util.List;
 import com.ssc.ssgm.fx.ifx.integration.curd.model.FormatterConfigEntity;
 import com.ssc.ssgm.fx.ifx.integration.curd.model.FormatterConfigExample;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
+
+import java.util.List;
 
 public interface FormatterConfigMapper {
     /**
@@ -66,4 +67,6 @@ public interface FormatterConfigMapper {
      * @mbg.generated generated automatically, do not modify!
      */
     int updateByExample(@Param("row") FormatterConfigEntity row, @Param("example") FormatterConfigExample example);
+
+    void deleteById(String id);
 }

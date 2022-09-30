@@ -119,6 +119,15 @@
             <include refid="Example_Where_Clause" />
         </if>
     </delete>
+
+
+    <delete id="deleteById" parameterType="string">
+        delete from KEY_MAPPER_CONFIG where ${id}
+    </delete>
+
+
+
+
     <insert id="insert" keyColumn="ID" keyProperty="id" parameterType="com.ssc.ssgm.fx.ifx.integration.curd.model.KeyMapperConfigEntity" useGeneratedKeys="true">
         <!-- @mbg.generated: generated automatically, do not modify! -->
         insert into KEY_MAPPER_CONFIG (ID,NAME, CREATED_TIME, KEY_MAPPER_TYPE,

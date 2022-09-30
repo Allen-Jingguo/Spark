@@ -2,9 +2,10 @@ package com.ssc.ssgm.fx.ifx.integration.curd.mapper;
 
 import com.ssc.ssgm.fx.ifx.integration.curd.model.KeyMapperConfigEntity;
 import com.ssc.ssgm.fx.ifx.integration.curd.model.KeyMapperConfigExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
+
+import java.util.List;
 
 public interface KeyMapperConfigMapper {
     /**
@@ -66,4 +67,6 @@ public interface KeyMapperConfigMapper {
      * @mbg.generated generated automatically, do not modify!
      */
     int updateByExample(@Param("row") KeyMapperConfigEntity row, @Param("example") KeyMapperConfigExample example);
+
+    void deleteById(String id);
 }

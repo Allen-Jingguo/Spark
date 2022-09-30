@@ -120,6 +120,14 @@
             <include refid="Example_Where_Clause" />
         </if>
     </delete>
+
+
+    <delete id="deleteById" parameterType="string">
+        delete from FORMATTER_CONFIG where id=${id}
+    </delete>
+
+
+
     <insert id="insert" keyColumn="ID" keyProperty="id" parameterType="com.ssc.ssgm.fx.ifx.integration.curd.model.FormatterConfigEntity" useGeneratedKeys="true">
         <!-- @mbg.generated: generated automatically, do not modify! -->
         insert into FORMATTER_CONFIG (ID,NAME, CREATED_TIME, FORMATTER_TYPE,

@@ -29,7 +29,7 @@ export async function createNew(params: any, options?: { [key: string]: any }) {
 }
 
 const getAllFormatterType = async function () {
-  return request<API.KeyValue>('/api/inbound/get_all_formatter_type', {
+  return request<API.KeyValue>('/api/formatter/get_all_formatter_type', {
     method: 'GET',
   });
 };

@@ -82,7 +82,7 @@ const KeyMapperCreateModal = (props) => {
             </Form.Item>
 
             <Form.Item
-              name="type"
+              name="keyMapperType"
               label="Type"
               rules={[{ required: true, message: 'Missing Outbound Type' }]}
             >
