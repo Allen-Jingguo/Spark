@@ -1,8 +1,6 @@
 package com.ssc.ssgm.fx.ifx.integration.curd.service;
 
 import com.ssc.ssgm.fx.ifx.integration.core.config.FlowConfig;
-import com.ssc.ssgm.fx.ifx.integration.core.config.InboundConfig;
-import com.ssc.ssgm.fx.ifx.integration.core.config.OutboundConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.Flow;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowStatus;
@@ -11,8 +9,6 @@ import com.ssc.ssgm.fx.ifx.integration.curd.mapper.InboundConfigMapper;
 import com.ssc.ssgm.fx.ifx.integration.curd.mapper.OutboundConfigMapper;
 import com.ssc.ssgm.fx.ifx.integration.curd.model.FlowConfigEntity;
 import com.ssc.ssgm.fx.ifx.integration.curd.model.FlowConfigExample;
-import com.ssc.ssgm.fx.ifx.integration.curd.model.InboundConfigExample;
-import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -20,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -107,4 +102,5 @@ public class FlowConfigService {
         criteria.andNameEqualTo(name);
         flowConfigMapper.updateByExampleSelective(flowConfigEntity,example);
     }
+
 }
