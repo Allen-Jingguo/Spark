@@ -20,4 +20,10 @@ public class IntegrationController {
         return Response.success();
     }
 
+    @ApiOperation("currentUser")
+    @GetMapping("/currentUser")
+    public Response<Boolean> currentUser() {
+        return Response.success(true);
+    }
+
 }
