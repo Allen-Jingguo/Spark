@@ -20,7 +20,7 @@ const getList = async function (
 };
 
 export async function stop(
-  params: {
+  data: {
     name?: string;
     id?: string;
   },
@@ -28,15 +28,15 @@ export async function stop(
 ) {
   return request<API.FLow>('/api/flow/stop', {
     method: 'post',
-    params: {
-      ...params,
+    data: {
+      ...data,
     },
     ...(options || {}),
   });
 }
 
 export async function start(
-  params: {
+  data: {
     name?: string;
     id?: string;
   },
@@ -44,15 +44,15 @@ export async function start(
 ) {
   return request<API.FLow>('/api/flow/start', {
     method: 'post',
-    params: {
-      ...params,
+    data: {
+      ...data,
     },
     ...(options || {}),
   });
 }
 
 export async function pause(
-  params: {
+  data: {
     name?: string;
     id?: string;
   },
@@ -60,8 +60,8 @@ export async function pause(
 ) {
   return request<API.FLow>('/api/flow/pause', {
     method: 'post',
-    params: {
-      ...params,
+    data: {
+      ...data,
     },
     ...(options || {}),
   });
