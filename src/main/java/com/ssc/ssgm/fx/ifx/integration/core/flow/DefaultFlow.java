@@ -66,8 +66,8 @@ public class DefaultFlow implements Flow {
     boolean pauseFlag = false;
     boolean runFlag = false;
 
-    @Override
-    public void execute() {
+
+    public void executeInner() {
         log.info("=== Flow is executing,id={} flowName={},flowStatus={}", id, name, flowStatus.name());
         //TODO TransAction
         if (transActionType == FlowTransActionType.NO) {
@@ -114,6 +114,34 @@ public class DefaultFlow implements Flow {
         }
     }
 
+    private void init() {
+        val inboundConfig = this.flowContext.getInboundConfigMaps().get(flowConfig.getInboundConfigId());
+        val outBoundConfig = this.flowContext.getOutboundConfigMaps().get(flowConfig.getOutboundConfigId());
+        val mapperConfig = this.flowContext.getKeyMapperConfigMaps().get(flowConfig.getKeyMapperId());
+        val formatterConfig = this.flowContext.getFormatterConfigMaps().get(flowConfig.getFormatterId());
+
+        this.inbound = Inbound.build(inboundConfig);
+        this.parser = ParserEnum.getParser(flowConfig.getParserType());
+        this.keyMapper = KeyMapper.build(mapperConfig);
+        this.formatter = Formatter.build(formatterConfig);
+        this.outBound = OutBound.build(outBoundConfig);
+    }
+
+    @Override
+    public void execute() {
+        if (this.flowStatus == FlowStatus.RUNNABLE) {
+            ExecutorUtil.getAsyncTaskExecutor().submit(() -> {
+                try {
+                    this.init();
+                    this.executeInner();
+                } catch (Exception e) {
+                    log.error("Exception::", e);
+                }
+            });
+        }
+        throw new SystemException("FLowExecuteStatus error,flowStatus= " + this.flowStatus);
+    }
+
     @Override
     public synchronized void start() {
 
@@ -122,30 +150,19 @@ public class DefaultFlow implements Flow {
             this.flowStatus = FlowStatus.RUNNABLE;
             ExecutorUtil.getAsyncTaskExecutor().submit(() -> {
                 try {
-                    val inboundConfig = this.flowContext.getInboundConfigMaps().get(flowConfig.getInboundConfigId());
-                    val outBoundConfig = this.flowContext.getOutboundConfigMaps().get(flowConfig.getOutboundConfigId());
-                    val mapperConfig = this.flowContext.getKeyMapperConfigMaps().get(flowConfig.getKeyMapperId());
-                    val formatterConfig = this.flowContext.getFormatterConfigMaps().get(flowConfig.getFormatterId());
-
-                    this.inbound = Inbound.build(inboundConfig);
-                    this.parser = ParserEnum.getParser(flowConfig.getParserType());
-                    this.keyMapper = KeyMapper.build(mapperConfig);
-                    this.formatter = Formatter.build(formatterConfig);
-                    this.outBound = OutBound.build(outBoundConfig);
-
-                    this.execute();
+                    this.init();
+                    this.executeInner();
                 } catch (Exception e) {
                     log.error("Exception::", e);
                 }
             });
         }
-
         throw new SystemException("FLowExecuteStatus error,flowStatus= " + this.flowStatus);
 
     }
 
     @Override
-    public void stop() {
+    public synchronized void stop() {
         if (this.flowStatus == FlowStatus.RUNNABLE || this.flowStatus == FlowStatus.PAUSE) {
             flowContext.updateFlowStatus(this.getId(), this.flowStatus, FlowStatus.STOPPING);
             this.flowStatus = FlowStatus.STOPPING;
@@ -168,7 +185,7 @@ public class DefaultFlow implements Flow {
     }
 
     @Override
-    public void pause() {
+    public synchronized void pause() {
 
         if (this.flowStatus == FlowStatus.RUNNABLE) {
             flowContext.updateFlowStatus(this.getId(), this.flowStatus, FlowStatus.PAUSING);

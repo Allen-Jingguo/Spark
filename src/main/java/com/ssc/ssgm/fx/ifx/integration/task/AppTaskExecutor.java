@@ -44,11 +44,9 @@ public class AppTaskExecutor implements ApplicationContextAware, InitializingBea
             //execute flow
             if (defaultFlows != null && !defaultFlows.isEmpty()) {
                 defaultFlows.forEach(defaultFlow -> {
-                    ExecutorUtil.getAsyncTaskExecutor().submit(() -> {
-                        if(defaultFlow.getFlowStatus()== FlowStatus.RUNNABLE){
-                            defaultFlow.execute();
-                        }
-                    });
+                    if (defaultFlow.getFlowStatus() == FlowStatus.RUNNABLE) {
+                        defaultFlow.execute();
+                    }
                 });
             }
         } catch (Exception e) {
@@ -61,15 +59,9 @@ public class AppTaskExecutor implements ApplicationContextAware, InitializingBea
                 final val fixTimeLoadFlows = new ArrayList<>(flowContext.getFlowsMap().values());
                 if (fixTimeLoadFlows != null && !fixTimeLoadFlows.isEmpty()) {
                     fixTimeLoadFlows.forEach(defaultFlow -> {
-                        ExecutorUtil.getAsyncTaskExecutor().submit(() -> {
-                            try {
-                                if(defaultFlow.getFlowStatus()== FlowStatus.RUNNABLE){
-                                    defaultFlow.execute();
-                                }
-                            } catch (Exception e) {
-                                log.error("Exception::", e);
-                            }
-                        });
+                        if (defaultFlow.getFlowStatus() == FlowStatus.RUNNABLE) {
+                            defaultFlow.execute();
+                        }
                     });
                 }
             } catch (Exception e) {
