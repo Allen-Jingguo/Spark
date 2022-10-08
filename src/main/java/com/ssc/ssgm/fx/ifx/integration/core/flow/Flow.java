@@ -8,6 +8,8 @@ public interface Flow {
 
     void pause();
 
+    void execute();
+
     FLowExecuteStatus getExecuteStatus();
 
     FlowStatus getPersistStatus();
