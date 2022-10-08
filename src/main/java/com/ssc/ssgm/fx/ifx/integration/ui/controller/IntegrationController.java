@@ -22,6 +22,7 @@ public class IntegrationController {
 
     @ApiOperation("currentUser")
     @GetMapping("/currentUser")
+
     public Response<Boolean> currentUser() {
         return Response.success(true);
     }

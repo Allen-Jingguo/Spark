@@ -87,7 +87,7 @@ public class FlowController {
         List<KeyMapperConfig> keyMapperConfigs = new ArrayList<>(flowContext.getKeyMapperConfigMaps().values());
         List<KeyValue> keyValues = keyMapperConfigs.stream().map(e -> {
             KeyValue keyValue = new KeyValue();
-            keyValue.setValue(e.getName());
+            keyValue.setValue(e.getId());
             keyValue.setLabel(e.getName());
             return keyValue;
         }).collect(Collectors.toList());
