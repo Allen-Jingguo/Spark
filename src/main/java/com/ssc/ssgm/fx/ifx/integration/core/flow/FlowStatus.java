@@ -6,8 +6,12 @@ public enum FlowStatus {
 
     RUNNABLE,
 
-    TERMINATION,
+    PAUSING,
 
     PAUSE,
+
+    STOPPING,
+
+    TERMINATION,
 
 }

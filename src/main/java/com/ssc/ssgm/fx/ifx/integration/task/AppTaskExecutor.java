@@ -14,6 +14,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -38,15 +39,15 @@ public class AppTaskExecutor implements ApplicationContextAware, InitializingBea
 
     void init() {
         try {
-            List<Flow> defaultFlows = flowContext.loadFlows();
+            flowContext.initLoadFlows();
+            List<Flow> defaultFlows = new ArrayList<>(flowContext.getFlowsMap().values());
             //execute flow
             if (defaultFlows != null && !defaultFlows.isEmpty()) {
                 defaultFlows.forEach(defaultFlow -> {
                     ExecutorUtil.getAsyncTaskExecutor().submit(() -> {
-//                        if(defaultFlow.getPersistStatus()== FlowStatus.RUNNABLE){
-//                            defaultFlow.start();
-//                        }
-                        defaultFlow.execute();
+                        if(defaultFlow.getFlowStatus()== FlowStatus.RUNNABLE){
+                            defaultFlow.execute();
+                        }
                     });
                 });
             }
@@ -56,15 +57,15 @@ public class AppTaskExecutor implements ApplicationContextAware, InitializingBea
 
         ExecutorUtil.getScheduledExecutor().scheduleWithFixedDelay(() -> {
             try {
-                final val fixTimeLoadFlows = flowContext.loadFlows();
+                flowContext.initLoadFlows();
+                final val fixTimeLoadFlows = new ArrayList<>(flowContext.getFlowsMap().values());
                 if (fixTimeLoadFlows != null && !fixTimeLoadFlows.isEmpty()) {
                     fixTimeLoadFlows.forEach(defaultFlow -> {
                         ExecutorUtil.getAsyncTaskExecutor().submit(() -> {
                             try {
-//                                if(defaultFlow.getPersistStatus()== FlowStatus.RUNNABLE){
-//                                    defaultFlow.start();
-//                                }
-                                defaultFlow.execute();
+                                if(defaultFlow.getFlowStatus()== FlowStatus.RUNNABLE){
+                                    defaultFlow.execute();
+                                }
                             } catch (Exception e) {
                                 log.error("Exception::", e);
                             }

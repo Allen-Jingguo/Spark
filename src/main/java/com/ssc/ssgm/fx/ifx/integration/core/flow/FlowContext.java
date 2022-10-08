@@ -1,13 +1,17 @@
 package com.ssc.ssgm.fx.ifx.integration.core.flow;
 
-import com.ssc.ssgm.fx.ifx.integration.core.config.*;
-import com.ssc.ssgm.fx.ifx.integration.core.formatter.Formatter;
-import com.ssc.ssgm.fx.ifx.integration.core.inbound.Inbound;
-import com.ssc.ssgm.fx.ifx.integration.core.mapper.KeyMapper;
-import com.ssc.ssgm.fx.ifx.integration.core.outbound.OutBound;
-import com.ssc.ssgm.fx.ifx.integration.core.parser.ParserEnum;
+import com.ssc.ssgm.fx.ifx.integration.common.exception.SystemException;
+import com.ssc.ssgm.fx.ifx.integration.core.config.FlowConfig;
+import com.ssc.ssgm.fx.ifx.integration.core.config.FormatterConfig;
+import com.ssc.ssgm.fx.ifx.integration.core.config.InboundConfig;
+import com.ssc.ssgm.fx.ifx.integration.core.config.KeyMapperConfig;
+import com.ssc.ssgm.fx.ifx.integration.core.config.OutboundConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.transformer.Transformer;
-import com.ssc.ssgm.fx.ifx.integration.curd.service.*;
+import com.ssc.ssgm.fx.ifx.integration.curd.service.FlowConfigService;
+import com.ssc.ssgm.fx.ifx.integration.curd.service.FormatterConfigService;
+import com.ssc.ssgm.fx.ifx.integration.curd.service.InboundConfigService;
+import com.ssc.ssgm.fx.ifx.integration.curd.service.KeyMapperConfigService;
+import com.ssc.ssgm.fx.ifx.integration.curd.service.OutboundConfigService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -19,11 +23,12 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Data
@@ -48,82 +53,113 @@ public class FlowContext implements ApplicationContextAware, InitializingBean {
     KeyMapperConfigService keyMapperConfigService;
 
 
-    List<FlowConfig> flowConfigs = new CopyOnWriteArrayList<>();
+    Map<String, FlowConfig> flowConfigMaps = new ConcurrentHashMap<>();
 
-    List<FormatterConfig> formatterConfigs = new CopyOnWriteArrayList<>();
+    Map<String, FormatterConfig> formatterConfigMaps = new ConcurrentHashMap<>();
 
-    List<KeyMapperConfig> keyMapperConfigs = new CopyOnWriteArrayList<>();
+    Map<String, KeyMapperConfig> keyMapperConfigMaps = new ConcurrentHashMap<>();
 
-    List<InboundConfig> inboundConfigs = new CopyOnWriteArrayList<>();
+    Map<String, InboundConfig> inboundConfigMaps = new ConcurrentHashMap<>();
 
-    List<OutboundConfig> outboundConfigs = new CopyOnWriteArrayList<>();
+    Map<String, OutboundConfig> outboundConfigMaps = new ConcurrentHashMap<>();
 
-    List<Flow> flows = new CopyOnWriteArrayList<>();
 
-    public Map<String, Flow> getFLowMap() {
-        Map<String, Flow> result = new HashMap<>();
-        flows.forEach(e -> {
-            result.put(e.getId(), e);
-        });
-        return result;
+    Map<String, Flow> flowsMap = new ConcurrentHashMap<>();
+
+    public Flow getFlow(String flowId) {
+        return flowsMap.get(flowId);
     }
 
+    //    public Map<String, Flow> getFLowMap() {
+    //        Map<String, Flow> result = new HashMap<>();
+    //        flowsMap.forEach(e -> {
+    //            result.put(e.getId(), e);
+    //        });
+    //        return result;
+    //    }
+
     public void addFlowConfig(FlowConfig flowConfig) {
-        for (FlowConfig config : flowConfigs) {
-            if (config.getId().equals(flowConfig.getId())) {
-                return;
-            }
+        if (this.flowConfigMaps.containsKey(flowConfig.getId())) {
+            return;
         }
-        flowConfigs.add(flowConfig);
+        flowConfigMaps.put(flowConfig.getId(), flowConfig);
+    }
+
+    public void addFlow(FlowConfig flowConfig) {
+
+        String id = UUID.randomUUID().toString().replace("-", "");
+        flowConfig.setId(id);
+        flowConfig.setCreatedTime(new Date());
+        flowConfig.setFlowStatus(FlowStatus.NEW.name());
+
+        if (this.flowConfigMaps.containsKey(flowConfig.getId())) {
+            return;
+        }
+
+        if (flowConfigService.addConfig(flowConfig) != 1) {
+            return;
+        }
+
+        Map<String, Transformer> transformerMap = ac.getBeansOfType(Transformer.class);
+        val flow = DefaultFlow.builder()
+                //                        .inbound(Inbound.build(inboundConfig))
+                //                        .parser(ParserEnum.getParser(flowConfig.getParserType()))
+                //                        .keyMapper(KeyMapper.build(mapperConfig))
+                .transformers(new ArrayList<>(transformerMap.values()))
+                //                        .formatter(Formatter.build(formatterConfig))
+                //                        .outBound(OutBound.build(outBoundConfig))
+                .transActionType(FlowTransActionType.valueOf(flowConfig.getTransactionType()))
+                .flowStatus(FlowStatus.NEW)
+                .id(flowConfig.getId())
+                .name(flowConfig.getName())
+                .flowConfig(flowConfig)
+                .flowContext(this)
+                .build();
+
+        flowConfigMaps.put(flowConfig.getId(), flowConfig);
+        flowsMap.put(flowConfig.getId(), flow);
+
     }
 
     public void addFormatterConfig(FormatterConfig formatterConfig) {
-        for (FormatterConfig config : formatterConfigs) {
-            if (config.getId().equals(formatterConfig.getId())) {
-                return;
-            }
+        if (this.formatterConfigMaps.containsKey(formatterConfig.getId())) {
+            return;
         }
-        formatterConfigs.add(formatterConfig);
+        formatterConfigMaps.put(formatterConfig.getId(), formatterConfig);
     }
 
     public void addKeyMapperConfig(KeyMapperConfig keyMapperConfig) {
-        for (KeyMapperConfig config : keyMapperConfigs) {
-            if (config.getId().equals(keyMapperConfig.getId())) {
-                return;
-            }
+        if (this.keyMapperConfigMaps.containsKey(keyMapperConfig.getId())) {
+            return;
         }
-        keyMapperConfigs.add(keyMapperConfig);
+        keyMapperConfigMaps.put(keyMapperConfig.getId(), keyMapperConfig);
     }
 
     public void addSourceInConfig(InboundConfig inboundConfig) {
-        for (InboundConfig config : inboundConfigs) {
-            if (config.getId().equals(inboundConfig.getId())) {
-                return;
-            }
+        if (this.inboundConfigMaps.containsKey(inboundConfig.getId())) {
+            return;
         }
-        inboundConfigs.add(inboundConfig);
+        inboundConfigMaps.put(inboundConfig.getId(), inboundConfig);
     }
 
     public void addSourceOutConfig(OutboundConfig outboundConfig) {
-        for (OutboundConfig config : outboundConfigs) {
-            if (config.getId().equals(outboundConfig.getId())) {
-                return;
-            }
+        if (this.outboundConfigMaps.containsKey(outboundConfig.getId())) {
+            return;
         }
-        outboundConfigs.add(outboundConfig);
+        outboundConfigMaps.put(outboundConfig.getId(), outboundConfig);
     }
 
-    public void removeFlowConfig(String id) {flowConfigs.removeIf(flowConfig -> {return flowConfig.getId().equals(id);});}
+//        public void removeFlowConfig(String id) {flowConfigMaps.removeIf(flowConfig -> {return flowConfig.getId().equals(id);});}
+//
+//        public void removeFormatterConfig(String id) {formatterConfigMaps.removeIf(formatterConfig -> {return formatterConfig.getId().equals(id);});}
+//
+//        public void removeKeyMapperConfig(String id) {keyMapperConfigMaps.removeIf(keyMapperConfig -> {return keyMapperConfig.getId().equals(id);});}
+//
+//        public void removeSourceInConfig(String id) {inboundConfigMaps.removeIf(inboundConfig -> {return inboundConfig.getId().equals(id);});}
+//
+//        public void removeSourceOutConfig(String id) {outboundConfigMaps.removeIf(outboundConfig -> {return outboundConfig.getId().equals(id);});}
 
-    public void removeFormatterConfig(String id) {formatterConfigs.removeIf(formatterConfig -> {return formatterConfig.getId().equals(id);});}
-
-    public void removeKeyMapperConfig(String id) {keyMapperConfigs.removeIf(keyMapperConfig -> {return keyMapperConfig.getId().equals(id);});}
-
-    public void removeSourceInConfig(String id) {inboundConfigs.removeIf(inboundConfig -> {return inboundConfig.getId().equals(id);});}
-
-    public void removeSourceOutConfig(String id) {outboundConfigs.removeIf(outboundConfig -> {return outboundConfig.getId().equals(id);});}
-
-    public List<Flow> loadFlows() {
+    public void initLoadFlows() {
 
         // load  config
         Map<String, FlowConfig> flowConfigs = this.getAllFlowConfigs();
@@ -146,55 +182,42 @@ public class FlowContext implements ApplicationContextAware, InitializingBean {
         sourceOutConfigs.values().forEach(e -> {
             this.addSourceOutConfig(e);
         });
-        // get flow
-        List<Flow> defaultFlowList = new ArrayList<>();
 
-        for (Map.Entry<String, FlowConfig> stringFlowConfigEntry : flowConfigs.entrySet()) {
-
-            {
-                try {
-                    FlowConfig flowConfig = stringFlowConfigEntry.getValue();
-                    val inboundConfig = sourceInConfigs.get(flowConfig.getInboundConfigId());
-                    val outBoundConfig = sourceOutConfigs.get(flowConfig.getOutboundConfigId());
-                    val mapperConfig = keyMapperConfigs.get(flowConfig.getKeyMapperId());
-                    val formatterConfig = formatterConfigs.get(flowConfig.getFormatterId());
-
-                    Map<String, Transformer> transformerMap = ac.getBeansOfType(Transformer.class);
-
-                    val flow = DefaultFlow.builder().inbound(Inbound.build(inboundConfig))
-                            .parser(ParserEnum.getParser(flowConfig.getParserType()))
-                            .keyMapper(KeyMapper.build(mapperConfig))
-                            .transformers(new ArrayList<>(transformerMap.values()))
-                            .formatter(Formatter.build(formatterConfig))
-                            .outBound(OutBound.build(outBoundConfig))
-                            .transActionType(FlowTransActionType.valueOf(flowConfig.getTransactionType()))
-                            .flowStatus(FlowStatus.valueOf(flowConfig.getFlowStatus()))
-                            .id(flowConfig.getId())
-                            .name(flowConfig.getName())
-                            .build();
-
-                    defaultFlowList.add(flow);
-                } catch (BeansException e) {
-                    log.error("BeansException",e);
-                } catch (IllegalArgumentException e) {
-                    log.error("IllegalArgumentException",e);
-                }
+        flowConfigs.keySet().forEach(key -> {
+            if (flowsMap.containsKey(key)) {
+                return;
             }
 
-        }
+            FlowConfig flowConfig = flowConfigs.get(key);
+            try {
+                log.info("init load flow config value:{}", flowConfig);
 
+                Map<String, Transformer> transformerMap = ac.getBeansOfType(Transformer.class);
+                val flow = DefaultFlow.builder()
+                        //                        .inbound(Inbound.build(inboundConfig))
+                        //                        .parser(ParserEnum.getParser(flowConfig.getParserType()))
+                        //                        .keyMapper(KeyMapper.build(mapperConfig))
+                        .transformers(new ArrayList<>(transformerMap.values()))
+                        //                        .formatter(Formatter.build(formatterConfig))
+                        //                        .outBound(OutBound.build(outBoundConfig))
+                        .transActionType(FlowTransActionType.valueOf(flowConfig.getTransactionType()))
+                        .flowStatus(FlowStatus.valueOf(flowConfig.getFlowStatus()))
+                        .id(flowConfig.getId())
+                        .name(flowConfig.getName())
+                        .flowConfig(flowConfig)
+                        .flowContext(this)
+                        .build();
 
-
-        //filter loaded flow
-        List<Flow> filteredFlows = defaultFlowList.stream().filter(e -> {
-            return !flows.stream().anyMatch(e1 -> e.getId().equals(e1.getId()));
-        }).collect(Collectors.toList());
-
-        flows.addAll(filteredFlows);
-
-        return filteredFlows;
+                flowsMap.put(flowConfig.getId(), flow);
+            } catch (BeansException e) {
+                log.error("BeansException", e);
+            } catch (IllegalArgumentException e) {
+                log.error("IllegalArgumentException", e);
+            }
+        });
 
     }
+
 
     private Map<String, InboundConfig> getSourceInConfigs() {
         List<InboundConfig> configs = this.inboundConfigService.loadAll();
@@ -263,4 +286,15 @@ public class FlowContext implements ApplicationContextAware, InitializingBean {
 
     }
 
+    public void updateFlowStatus(String flowId, FlowStatus oldStatus, FlowStatus expectStatus) {
+        if (this.flowsMap.get(flowId) != null) {
+            throw new SystemException("flow is null");
+        }
+
+        Flow flow = this.flowsMap.get(flowId);
+        if (!flowConfigService.updateFlowStatus(flowId, oldStatus.name(), expectStatus.name())) {
+            throw new SystemException("update  flow status fail , flow =" + flow.toString());
+        }
+
+    }
 }

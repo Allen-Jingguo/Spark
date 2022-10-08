@@ -4,7 +4,6 @@ package com.ssc.ssgm.fx.ifx.integration.ui.controller;
 import com.ssc.ssgm.fx.ifx.integration.common.Response;
 import com.ssc.ssgm.fx.ifx.integration.core.config.KeyMapperConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowStatus;
 import com.ssc.ssgm.fx.ifx.integration.core.mapper.KeyMapperEnum;
 import com.ssc.ssgm.fx.ifx.integration.curd.service.KeyMapperConfigService;
 import com.ssc.ssgm.fx.ifx.integration.ui.dto.MapperDTO;
@@ -69,12 +68,12 @@ public class MapperController {
     @PostMapping("/disable")
     public Response<?> disable(@RequestParam("id") String id) {
 
-        if (flowContext.getFlowConfigs().stream().anyMatch(e -> e.getKeyMapperId().equals(id)&&FlowStatus.RUNNABLE.name().equals(e.getFlowStatus()))) {
-            return Response.fail("exist runnable flow ,can't disable");
-        }
-
-        keyMapperConfigService.disableConfig(id);
-        flowContext.removeKeyMapperConfig(id);
+//        if (flowContext.getFlowConfigMaps().stream().anyMatch(e -> e.getKeyMapperId().equals(id)&&FlowStatus.RUNNABLE.name().equals(e.getFlowStatus()))) {
+//            return Response.fail("exist runnable flow ,can't disable");
+//        }
+//
+//        keyMapperConfigService.disableConfig(id);
+//        flowContext.removeKeyMapperConfig(id);
         return Response.success();
     }
 

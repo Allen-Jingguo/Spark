@@ -149,8 +149,6 @@ public class JDBCInbound implements Inbound {
             ExecutorUtil.getAsyncTaskExecutor().submit(this::run);
         }
 
-
-
     }
 
     /**

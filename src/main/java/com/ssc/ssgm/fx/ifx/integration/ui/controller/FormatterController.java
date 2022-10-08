@@ -4,7 +4,6 @@ package com.ssc.ssgm.fx.ifx.integration.ui.controller;
 import com.ssc.ssgm.fx.ifx.integration.common.Response;
 import com.ssc.ssgm.fx.ifx.integration.core.config.FormatterConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowStatus;
 import com.ssc.ssgm.fx.ifx.integration.core.formatter.FormatterEnum;
 import com.ssc.ssgm.fx.ifx.integration.curd.service.FormatterConfigService;
 import io.swagger.annotations.ApiOperation;
@@ -69,12 +68,12 @@ public class FormatterController {
     @PostMapping("/disable")
     public Response<?> disable(@RequestParam("id") String id) {
 
-        if (flowContext.getFlowConfigs().stream().anyMatch(e -> e.getFormatterId().equals(id) && FlowStatus.RUNNABLE.name().equals(e.getFlowStatus()))) {
-            return Response.fail("exist runnable flow ,can't disable");
-        }
-
-        formatterConfigService.disableConfig(id);
-        flowContext.removeFormatterConfig(id);
+//        if (flowContext.getFlowConfigMaps().stream().anyMatch(e -> e.getFormatterId().equals(id) && FlowStatus.RUNNABLE.name().equals(e.getFlowStatus()))) {
+//            return Response.fail("exist runnable flow ,can't disable");
+//        }
+//
+//        formatterConfigService.disableConfig(id);
+//        flowContext.removeFormatterConfig(id);
 
         return Response.success();
     }

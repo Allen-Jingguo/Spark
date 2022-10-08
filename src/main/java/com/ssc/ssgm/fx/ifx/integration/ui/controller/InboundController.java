@@ -74,11 +74,11 @@ public class InboundController {
     @ApiOperation("disable")
     @PostMapping("/disable")
     public Response<?> disable(@RequestParam("id") Long id) {
-        if (inboundConfigService.disableConfig(id) != 1) {
-            log.error("Disable config failed. No Inbound config found with ID {} .",id);
-            return Response.fail();
-        }
-        flowContext.removeSourceInConfig(Long.toString(id));
+//        if (inboundConfigService.disableConfig(id) != 1) {
+//            log.error("Disable config failed. No Inbound config found with ID {} .",id);
+//            return Response.fail();
+//        }
+//        flowContext.removeSourceInConfig(Long.toString(id));
         return Response.success();
     }
 

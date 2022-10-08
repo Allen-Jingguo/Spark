@@ -72,4 +72,7 @@ public interface FlowConfigMapper {
      * @mbg.generated generated automatically, do not modify!
      */
     int updateByExample(@Param("row") FlowConfigEntity row, @Param("example") FlowConfigExample example);
+
+    int updateFlowStatus(@Param("flowId")String flowId, @Param("oldStatus")String oldStatus,@Param("expectStatus") String expectStatus);
+
 }

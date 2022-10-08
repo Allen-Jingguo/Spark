@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -52,32 +53,32 @@ public class OutboundController {
     @ApiOperation("list")
     @GetMapping("/list")
     public Response<List<OutboundConfig>> list() {
-        List<OutboundConfig> outboundConfigs = outboundConfigService.loadAll();
 
-        outboundConfigs.forEach(e->{
+        List<OutboundConfig> outboundConfigs = new ArrayList<>(flowContext.getOutboundConfigMaps().values());
+        outboundConfigs.forEach(e -> {
             Map<String, String> map = KeyValueConfigLoadUtil.loadConfig(e.getProperties());
             e.setHostName("NA");
             e.setUserName("NA");
-            if(map.get("HostName")!=null){
+            if (map.get("HostName") != null) {
                 e.setHostName(map.get("HostName"));
             }
-            if(map.get("UserName")!=null){
+            if (map.get("UserName") != null) {
                 e.setUserName(map.get("HostName"));
             }
         });
 
-        flowContext.setOutboundConfigs(outboundConfigs);
+        //flowContext.addOutboundConfigMaps(outboundConfigs);
         return Response.success(outboundConfigs);
     }
 
     @ApiOperation("disable")
     @PostMapping("/disable")
     public Response<?> disable(@RequestBody OutboundConfig outboundConfig) {
-        if (outboundConfigService.disableConfig(Long.valueOf(outboundConfig.getId())) != 1) {
-            log.error("Disable config failed. No Inbound config found with ID： {} .", outboundConfig.getId());
-            return Response.fail();
-        }
-        flowContext.removeSourceOutConfig(outboundConfig.getId());
+        //        if (outboundConfigService.disableConfig(Long.valueOf(outboundConfig.getId())) != 1) {
+        //            log.error("Disable config failed. No Inbound config found with ID： {} .", outboundConfig.getId());
+        //            return Response.fail();
+        //        }
+        //        flowContext.removeSourceOutConfig(outboundConfig.getId());
         return Response.success();
     }
 

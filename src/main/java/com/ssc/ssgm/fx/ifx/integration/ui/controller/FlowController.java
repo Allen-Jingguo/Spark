@@ -7,11 +7,8 @@ import com.ssc.ssgm.fx.ifx.integration.core.config.FormatterConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.config.InboundConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.config.KeyMapperConfig;
 import com.ssc.ssgm.fx.ifx.integration.core.config.OutboundConfig;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.DefaultFlow;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.FLowExecuteStatus;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.Flow;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowStatus;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowTransActionType;
 import com.ssc.ssgm.fx.ifx.integration.core.parser.ParserEnum;
 import com.ssc.ssgm.fx.ifx.integration.curd.service.FlowConfigService;
@@ -27,10 +24,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -61,7 +58,7 @@ public class FlowController {
     @ApiOperation("get_inbounds")
     @GetMapping("/get_inbounds")
     public Response<List<KeyValue>> getInbounds() {
-        List<InboundConfig> inboundConfigList = flowContext.getInboundConfigs();
+        List<InboundConfig> inboundConfigList = new ArrayList<>(flowContext.getInboundConfigMaps().values());
         List<KeyValue> inbounds = inboundConfigList.stream().map(e -> {
             KeyValue tKeyValue = new KeyValue();
             tKeyValue.setLabel(e.getName());
@@ -87,7 +84,7 @@ public class FlowController {
     @ApiOperation("get_key_mappers")
     @GetMapping("/get_key_mappers")
     public Response<List<KeyValue>> get_key_mappers() {
-        List<KeyMapperConfig> keyMapperConfigs = flowContext.getKeyMapperConfigs();
+        List<KeyMapperConfig> keyMapperConfigs = new ArrayList<>(flowContext.getKeyMapperConfigMaps().values());
         List<KeyValue> keyValues = keyMapperConfigs.stream().map(e -> {
             KeyValue keyValue = new KeyValue();
             keyValue.setValue(e.getName());
@@ -100,7 +97,7 @@ public class FlowController {
     @ApiOperation("get_formatters")
     @GetMapping("/get_formatters")
     public Response<List<KeyValue>> get_formatters() {
-        List<FormatterConfig> formatterConfigs = flowContext.getFormatterConfigs();
+        List<FormatterConfig> formatterConfigs = new ArrayList<>(flowContext.getFormatterConfigMaps().values());
         List<KeyValue> keyValues = formatterConfigs.stream().map(e -> {
             KeyValue keyValue = new KeyValue();
             keyValue.setValue(e.getId());
@@ -114,7 +111,7 @@ public class FlowController {
     @ApiOperation("get_outbounds")
     @GetMapping("/get_outbounds")
     public Response<List<KeyValue>> getOutbounds() {
-        List<OutboundConfig> outboundConfigList = flowContext.getOutboundConfigs();
+        List<OutboundConfig> outboundConfigList = new ArrayList<>(flowContext.getOutboundConfigMaps().values());
         List<KeyValue> outbounds = outboundConfigList.stream().map(e -> {
             KeyValue tKeyValue = new KeyValue();
             tKeyValue.setLabel(e.getName());
@@ -137,43 +134,40 @@ public class FlowController {
         String keyMapperName;
         String outboundName;
 
-        String  executeStatus;
+        String executeStatus;
     }
 
     @ApiOperation("list")
     @GetMapping("/list")
     public Response<List<FlowListDTO>> list() {
 
-        flowContext.loadFlows();
+        //flowContext.initLoadFlows();
 
-        List<FlowConfig> flowConfigs = flowContext.getFlowConfigs();
-        List<FlowListDTO> collect = flowConfigs.stream().map(e -> {
+        List<Flow> flows = new ArrayList<>(flowContext.getFlowsMap().values());
+        List<FlowListDTO> collect = flows.stream().map(flow -> {
+            FlowConfig config = flow.getFlowConfig();
 
             FlowListDTO dto = new FlowListDTO();
-            BeanUtils.copyProperties(e, dto);
-            List<KeyMapperConfig> mapperConfigs = flowContext.getKeyMapperConfigs().stream()
-                    .filter(v -> v.getId().equals(e.getKeyMapperId())).collect(Collectors.toList());
-            List<FormatterConfig> formatterConfigs = flowContext.getFormatterConfigs().stream()
-                    .filter(v -> v.getId().equals(e.getFormatterId())).collect(Collectors.toList());
-            List<InboundConfig> inboundConfigs = flowContext.getInboundConfigs().stream()
-                    .filter(v -> v.getId().equals(e.getInboundConfigId())).collect(Collectors.toList());
-            List<OutboundConfig> outboundConfigs = flowContext.getOutboundConfigs().stream()
-                    .filter(v -> v.getId().equals(e.getOutboundConfigId())).collect(Collectors.toList());
+            BeanUtils.copyProperties(config, dto);
+            KeyMapperConfig mapperConfig = flowContext.getKeyMapperConfigMaps().get(config.getKeyMapperId());
+            FormatterConfig formatterConfig = flowContext.getFormatterConfigMaps().get(config.getFormatterId());
+            InboundConfig inboundConfig = flowContext.getInboundConfigMaps().get(config.getInboundConfigId());
+            OutboundConfig outboundConfig = flowContext.getOutboundConfigMaps().get(config.getOutboundConfigId());
 
-            if (!mapperConfigs.isEmpty()) {
-                dto.setKeyMapperName(mapperConfigs.get(0).getName());
+            if (mapperConfig != null) {
+                dto.setKeyMapperName(mapperConfig.getName());
             }
-            if (!formatterConfigs.isEmpty()) {
-                dto.setFormatterName(formatterConfigs.get(0).getName());
+            if (formatterConfig != null) {
+                dto.setFormatterName(formatterConfig.getName());
             }
-            if (!inboundConfigs.isEmpty()) {
-                dto.setInboundName(inboundConfigs.get(0).getName());
+            if (inboundConfig != null) {
+                dto.setInboundName(inboundConfig.getName());
             }
-            if (!mapperConfigs.isEmpty()) {
-                dto.setOutboundName(outboundConfigs.get(0).getName());
+            if (mapperConfig != null) {
+                dto.setOutboundName(outboundConfig.getName());
             }
-            dto.setParserName(e.getParserType());
-            dto.setExecuteStatus(e.getFlowStatus());
+            dto.setParserName(config.getParserType());
+            dto.setExecuteStatus(config.getFlowStatus());
             return dto;
         }).collect(Collectors.toList());
         return Response.success(collect);
@@ -182,26 +176,30 @@ public class FlowController {
     @ApiOperation("disable")
     @GetMapping("/disable")
     public Response<?> disable(@RequestBody FlowConfig config) {
+
+        Flow flow = flowContext.getFlow(config.getId());
+        if (flow != null) {
+            try {
+                flow.stop();
+            } catch (Exception e) {
+                log.error("Exception::", e);
+                return Response.fail("stop fail ");
+            }
+        }
+
+
         if (flowConfigService.disableConfig(Long.valueOf(config.getId())) != 1) {
             log.error("Disable config failed. No FLow config found with ID {} .", config.getId());
             return Response.fail();
         }
-        flowContext.removeFlowConfig(config.getId());
+
         return Response.success();
     }
 
     @ApiOperation("create")
     @PostMapping("/create_new")
     public Response<?> create(@RequestBody FlowConfig flowConfig) {
-        String id = UUID.randomUUID().toString().replace("-", "");
-        flowConfig.setId(id);
-        flowConfig.setCreatedTime(new Date());
-        flowConfig.setFlowStatus(FlowStatus.NEW.name());
-
-        if (flowConfigService.addConfig(flowConfig) != 1) {
-            return Response.fail();
-        }
-        flowContext.addFlowConfig(flowConfig);
+        flowContext.addFlow(flowConfig);
         return Response.success();
     }
 
@@ -209,22 +207,15 @@ public class FlowController {
     @PostMapping("/start")
     public Response<?> start(@RequestBody FlowDTO flowDTO) {
 
-        Flow flow = flowContext.getFLowMap().get(flowDTO.getId());
+        Flow flow = flowContext.getFlow(flowDTO.getId());
         if (flow != null) {
-            if (flow.getPersistStatus() == FlowStatus.NEW || flow.getExecuteStatus() == FLowExecuteStatus.PAUSING) {
-
-                flowContext.getFlowConfigs().forEach(e -> {
-                    if (e.getId().equals(flow.getId())) {
-                        flowConfigService.updateStatusByName(e.getName(), FlowStatus.RUNNABLE.name());
-                    }
-                });
-
+            try {
                 flow.start();
-
-                return Response.success();
-            } else {
-                return Response.fail(" Only New Status or Termination of the flow can start ");
+            } catch (Exception e) {
+                log.error("Exception::", e);
+                return Response.fail("start fail ");
             }
+            return Response.success();
         }
         return Response.fail("start fail ");
     }
@@ -233,16 +224,15 @@ public class FlowController {
     @PostMapping("/pause")
     public Response<?> pause(@RequestBody FlowDTO flowDTO) {
 
-        Flow flow = flowContext.getFLowMap().get(flowDTO.getId());
+        Flow flow = flowContext.getFlow(flowDTO.getId());
         if (flow != null) {
-            if (flow.getPersistStatus() == FlowStatus.RUNNABLE || flow.getExecuteStatus() == FLowExecuteStatus.RUNNING) {
-                ((DefaultFlow)flow).setFLowExecuteStatus(FLowExecuteStatus.PAUSING);
-                 flow.pause();
-                //flowConfigService.updateFlowStatusByName(flowDTO.getName(), FlowStatus.PAUSE.name());
-                return Response.success();
-            } else {
-                return Response.fail(" Only Running sataus of the flow can pause ");
+            try {
+                flow.pause();
+            } catch (Exception e) {
+                log.error("Exception::", e);
+                return Response.fail("pause fail ");
             }
+            return Response.success();
         }
         return Response.fail("pause fail ");
 
@@ -252,21 +242,16 @@ public class FlowController {
     @PostMapping("/stop")
     public Response<?> stop(@RequestBody FlowDTO flowDTO) {
 
-        Flow flow = flowContext.getFLowMap().get(flowDTO.getId());
+        Flow flow = flowContext.getFlow(flowDTO.getId());
         if (flow != null) {
-            if (flow.getPersistStatus() == FlowStatus.RUNNABLE && flow.getExecuteStatus() == FLowExecuteStatus.RUNNING) {
+            try {
                 flow.stop();
-                flowContext.getFlowConfigs().forEach(e -> {
-                    if (e.getId().equals(flow.getId())) {
-                        flowConfigService.updateStatusByName(e.getName(), FlowStatus.TERMINATION.name());
-                    }
-                });
-                return Response.success();
-            } else {
-                return Response.fail(" Only Running status of the flow can stop ");
+            } catch (Exception e) {
+                log.error("Exception::", e);
+                return Response.fail("stop fail ");
             }
+            return Response.success();
         }
-
         return Response.fail("stop fail ");
     }
 
