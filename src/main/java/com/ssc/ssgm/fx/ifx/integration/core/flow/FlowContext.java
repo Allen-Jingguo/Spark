@@ -287,7 +287,8 @@ public class FlowContext implements ApplicationContextAware, InitializingBean {
     }
 
     public void updateFlowStatus(String flowId, FlowStatus oldStatus, FlowStatus expectStatus) {
-        if (this.flowsMap.get(flowId) != null) {
+
+        if (this.flowsMap.get(flowId) == null) {
             throw new SystemException("flow is null");
         }
 

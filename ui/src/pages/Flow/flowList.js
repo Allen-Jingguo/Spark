@@ -273,7 +273,7 @@ const FlowList = () => {
           <Table columns={columns} dataSource={flowList} pagination={true} />
         </div>
       </Card>
-      {showCreateModal && <FlowModal closeCreateModal={closeCreateModal}></FlowModal>}
+      {showCreateModal && <FlowModal closeCreateModal={closeCreateModal}/>}
     </PageContainer>
   );
 };

@@ -295,8 +295,10 @@
     </update>
     <update id="updateFlowStatus">
         update FLOW_CONFIG
-        set  FLOW_STATUS = #{expectStatus,jdbcType=VARCHAR},
+        set  FLOW_STATUS = #{expectStatus,jdbcType=VARCHAR}
         where  ID=#{flowId} and FLOW_STATUS= #{oldStatus}
+
+
     </update>
     <select id="selectByExampleWithLock" parameterType="com.ssc.ssgm.fx.ifx.integration.curd.model.FlowConfigExample" resultMap="BaseResultMap">
         <!-- @mbg.generated: generated automatically, do not modify! -->

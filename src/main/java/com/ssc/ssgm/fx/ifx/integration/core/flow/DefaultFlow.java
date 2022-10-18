@@ -138,6 +138,7 @@ public class DefaultFlow implements Flow {
                     log.error("Exception::", e);
                 }
             });
+            return ;
         }
         throw new SystemException("FLowExecuteStatus error,flowStatus= " + this.flowStatus);
     }
@@ -156,6 +157,7 @@ public class DefaultFlow implements Flow {
                     log.error("Exception::", e);
                 }
             });
+            return ;
         }
         throw new SystemException("FLowExecuteStatus error,flowStatus= " + this.flowStatus);
 
@@ -169,6 +171,7 @@ public class DefaultFlow implements Flow {
             ExecutorUtil.getAsyncTaskExecutor().submit(() -> {
                 try {
                     try {
+                        this.pauseFlag = true;
                         inbound.close();
                         outBound.close();
                         flowContext.updateFlowStatus(this.getId(), this.flowStatus, FlowStatus.TERMINATION);
@@ -180,6 +183,7 @@ public class DefaultFlow implements Flow {
                     log.error("Exception::", e);
                 }
             });
+            return ;
         }
         throw new SystemException("flowStatus error,flowStatus= " + this.flowStatus);
     }
@@ -201,7 +205,7 @@ public class DefaultFlow implements Flow {
                     log.error("Exception::", e);
                 }
             });
-
+            return ;
         }
         throw new SystemException("flowStatus error,flowStatus= " + this.flowStatus);
     }
