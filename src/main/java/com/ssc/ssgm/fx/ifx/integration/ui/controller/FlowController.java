@@ -134,7 +134,8 @@ public class FlowController {
         String keyMapperName;
         String outboundName;
 
-        String executeStatus;
+        String type;
+        String status;
     }
 
     @ApiOperation("list")
@@ -167,7 +168,8 @@ public class FlowController {
                 dto.setOutboundName(outboundConfig.getName());
             }
             dto.setParserName(config.getParserType());
-            dto.setExecuteStatus(config.getFlowStatus());
+            dto.setStatus(flow.getFlowStatus().name());
+            dto.setType("YES".equals(config.getTransactionType())?"TRANSACTION_YES":"TRANSACTION_NO");
             return dto;
         }).collect(Collectors.toList());
         return Response.success(collect);
@@ -212,6 +214,7 @@ public class FlowController {
             try {
                 flow.start();
             } catch (Exception e) {
+
                 log.error("Exception::", e);
                 return Response.fail("start fail ");
             }
@@ -253,6 +256,7 @@ public class FlowController {
             return Response.success();
         }
         return Response.fail("stop fail ");
+
     }
 
 }

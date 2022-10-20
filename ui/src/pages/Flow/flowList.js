@@ -69,6 +69,16 @@ const columns = [
     render: (text) => <a>{text}</a>,
   },
   {
+    title: 'Status',
+    dataIndex: 'status',
+    key: 'status',
+  },
+  {
+    title: 'Type',
+    dataIndex: 'type',
+    key: 'type',
+  },
+  {
     title: 'InboundName',
     dataIndex: 'inboundName',
     key: 'inboundName',
@@ -78,14 +88,6 @@ const columns = [
     dataIndex: 'parserName',
     key: 'parserName',
   },
-
-  {
-    title: 'FilterName',
-    dataIndex: 'filterName',
-    key: 'filterName',
-    render: (text) => <a>{'NA'}</a>,
-  },
-
   {
     title: 'KeyMapperName',
     dataIndex: 'keyMapperName',
@@ -109,6 +111,15 @@ const columns = [
     key: 'action',
     render: (_, record) => (
       <Space size="middle">
+        <Button
+          type="primary"
+          onClick={() => {
+            message.success('Wait for the implementation !');
+          }}
+        >
+          View
+        </Button>
+
         <Popconfirm
           title="Are you sure to start this flow?"
           onConfirm={() => confirm(record, 'start')}
@@ -116,34 +127,38 @@ const columns = [
           okText="Yes"
           cancelText="No"
         >
-          <a href="#" style={{ fontSize: 15 }}>
-            start
-          </a>
+          <Button type="primary">start</Button>
         </Popconfirm>
 
         <Popconfirm
-          title="Are you sure to start this flow?"
+          title="Are you sure to pause this flow?"
           onConfirm={() => confirm(record, 'pause')}
           onCancel={cancel}
           okText="Yes"
           cancelText="No"
         >
-          <a href="#" style={{ fontSize: 15 }}>
-            pause
-          </a>
+          <Button type="primary">pause</Button>
         </Popconfirm>
 
         <Popconfirm
-          title="Are you sure to start this flow?"
+          title="Are you sure to stop this flow?"
           onConfirm={() => confirm(record, 'stop')}
           onCancel={cancel}
           okText="Yes"
           cancelText="No"
         >
-          <a href="#" style={{ fontSize: 15 }}>
-            stop
-          </a>
+          <Button type="primary">stop</Button>
         </Popconfirm>
+
+        <Button
+          type="primary"
+          onClick={() => {
+            message.success('Wait for the implementation !');
+          }}
+        >
+          Test
+        </Button>
+
       </Space>
     ),
   },
@@ -230,8 +245,8 @@ const FlowList = () => {
                 <Form.Item name="type" label="Type">
                   <Select
                     options={[
-                      { label: 'Default', value: 'default' },
-                      { label: 'Transation', value: 'Transation' },
+                      { label: 'TRANSACTION_YES', value: 'YES' },
+                      { label: 'TRANSACTION_NO', value: 'NO' },
                     ]}
                     style={{ width: 150 }}
                   />
@@ -273,7 +288,7 @@ const FlowList = () => {
           <Table columns={columns} dataSource={flowList} pagination={true} />
         </div>
       </Card>
-      {showCreateModal && <FlowModal closeCreateModal={closeCreateModal}/>}
+      {showCreateModal && <FlowModal closeCreateModal={closeCreateModal} />}
     </PageContainer>
   );
 };

@@ -168,6 +168,8 @@ const OutboundCreateModal = (props) => {
                 placeholder="input other properties"
               />
             </Form.Item>
+
+            <Button type="primary">Test Connection</Button>
           </Form>
         </div>
       </Modal>

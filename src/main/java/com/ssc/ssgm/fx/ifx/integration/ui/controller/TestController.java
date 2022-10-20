@@ -87,7 +87,7 @@ public class TestController {
         KeyMapperConfig keyMapperConfig = new KeyMapperConfig();
         String p4 = "NAME=name2\n";
         keyMapperConfig.setProperties(p4);
-        keyMapperConfig.setKeyMapperType(KeyMapperEnum.DEFAULT);
+        keyMapperConfig.setKeyMapperType(KeyMapperEnum.KEY_MAPPER);
         keyMapperConfig.setCreatedTime(new Date());
         keyMapperConfig.setId(id);
         keyMapperConfig.setName("test");

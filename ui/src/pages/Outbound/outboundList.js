@@ -44,7 +44,6 @@ const disable = (record) => {
       message.success('operate successfully!');
     }
   });
-  message.success('operate successfully');
 };
 
 const cancel = (e) => {
@@ -90,17 +89,14 @@ const columns = [
     key: 'action',
     render: (_, record) => (
       <Space size="middle">
-        <Popconfirm
-          title="Are you sure to start this flow?"
-          onConfirm={() => view(record)}
-          onCancel={cancel}
-          okText="Yes"
-          cancelText="No"
+        <Button
+          type="primary"
+          onClick={() => {
+            message.success('Wait for the implementation !');
+          }}
         >
-          <a href="#" style={{ fontSize: 15 }}>
-            View
-          </a>
-        </Popconfirm>
+          Detail
+        </Button>
 
         <Popconfirm
           title="Are you sure to start this flow?"
@@ -109,9 +105,7 @@ const columns = [
           okText="Yes"
           cancelText="No"
         >
-          <a href="#" style={{ fontSize: 15 }}>
-            disable
-          </a>
+          <Button type="primary">disable</Button>
         </Popconfirm>
       </Space>
     ),

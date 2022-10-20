@@ -1,0 +1,1 @@
+insert into Test (id,name) values (${id},'${name}')

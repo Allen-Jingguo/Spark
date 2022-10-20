@@ -67,7 +67,7 @@ public class DefaultFlow implements Flow {
     boolean runFlag = false;
 
 
-    public void executeInner() {
+    public synchronized void executeInner() {
         log.info("=== Flow is executing,id={} flowName={},flowStatus={}", id, name, flowStatus.name());
         //TODO TransAction
         if (transActionType == FlowTransActionType.NO) {
@@ -115,6 +115,7 @@ public class DefaultFlow implements Flow {
     }
 
     private void init() {
+
         val inboundConfig = this.flowContext.getInboundConfigMaps().get(flowConfig.getInboundConfigId());
         val outBoundConfig = this.flowContext.getOutboundConfigMaps().get(flowConfig.getOutboundConfigId());
         val mapperConfig = this.flowContext.getKeyMapperConfigMaps().get(flowConfig.getKeyMapperId());
@@ -125,6 +126,7 @@ public class DefaultFlow implements Flow {
         this.keyMapper = KeyMapper.build(mapperConfig);
         this.formatter = Formatter.build(formatterConfig);
         this.outBound = OutBound.build(outBoundConfig);
+
     }
 
     @Override
@@ -170,15 +172,11 @@ public class DefaultFlow implements Flow {
             this.flowStatus = FlowStatus.STOPPING;
             ExecutorUtil.getAsyncTaskExecutor().submit(() -> {
                 try {
-                    try {
-                        this.pauseFlag = true;
-                        inbound.close();
-                        outBound.close();
-                        flowContext.updateFlowStatus(this.getId(), this.flowStatus, FlowStatus.TERMINATION);
-                        this.flowStatus = FlowStatus.TERMINATION;
-                    } catch (Exception e) {
-                        log.error("Exception::", e);
-                    }
+                    this.pauseFlag = true;
+                    inbound.close();
+                    outBound.close();
+                    flowContext.updateFlowStatus(this.getId(), this.flowStatus, FlowStatus.TERMINATION);
+                    this.flowStatus = FlowStatus.TERMINATION;
                 } catch (Exception e) {
                     log.error("Exception::", e);
                 }

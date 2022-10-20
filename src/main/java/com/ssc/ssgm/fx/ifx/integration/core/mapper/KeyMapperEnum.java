@@ -2,6 +2,7 @@ package com.ssc.ssgm.fx.ifx.integration.core.mapper;
 
 public enum KeyMapperEnum {
 
-    DEFAULT
+    KEY_MAPPER,
+    KEY_VALUE_MAPPER
 
 }
