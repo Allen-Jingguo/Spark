@@ -3,7 +3,7 @@ package com.ssc.ssgm.fx.ifx.integration.ui.controller;
 
 import com.ssc.ssgm.fx.ifx.integration.common.Response;
 import com.ssc.ssgm.fx.ifx.integration.core.config.OutboundConfig;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
+import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowManager;
 import com.ssc.ssgm.fx.ifx.integration.core.outbound.SourceOutTypeEnum;
 import com.ssc.ssgm.fx.ifx.integration.curd.service.OutboundConfigService;
 import com.ssc.ssgm.fx.ifx.integration.util.KeyValueConfigLoadUtil;
@@ -35,7 +35,7 @@ public class OutboundController {
     OutboundConfigService outboundConfigService;
 
     @Autowired
-    FlowContext flowContext;
+    FlowManager flowManager;
 
     @ApiOperation("get_type")
     @GetMapping("/get_types")
@@ -54,7 +54,7 @@ public class OutboundController {
     @GetMapping("/list")
     public Response<List<OutboundConfig>> list() {
 
-        List<OutboundConfig> outboundConfigs = new ArrayList<>(flowContext.getOutboundConfigMaps().values());
+        List<OutboundConfig> outboundConfigs = new ArrayList<>(flowManager.getOutboundConfigMaps().values());
         outboundConfigs.forEach(e -> {
             Map<String, String> map = KeyValueConfigLoadUtil.loadConfig(e.getProperties());
             e.setHostName("NA");
@@ -93,17 +93,21 @@ public class OutboundController {
 
         if (StringUtils.isNoneBlank(properties)) {
             //TODO
-            String prop = "";
+            properties+="\n";
             if (outboundConfig.getOutboundType() == SourceOutTypeEnum.JDBC) {
-                prop += "driver=oracle.jdbc.driver.OracleDriver\n";
+                //prop += "driver=oracle.jdbc.driver.OracleDriver\n";
+                properties += "user=" + outboundConfig.getUserName() + "\n";
+                properties += "password=" + outboundConfig.getPassword() + "\n";
+                outboundConfig.setProperties(properties);
             }
         }
         if (outboundConfigService.addConfig(outboundConfig) != 1) {
             log.error("Outbound config creation failed.");
             return Response.fail();
         }
-        flowContext.addSourceOutConfig(outboundConfig);
+        flowManager.addSourceOutConfig(outboundConfig);
         return Response.success();
     }
 
 }
+

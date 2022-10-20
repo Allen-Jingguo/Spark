@@ -3,7 +3,7 @@ package com.ssc.ssgm.fx.ifx.integration.ui.controller;
 
 import com.ssc.ssgm.fx.ifx.integration.common.Response;
 import com.ssc.ssgm.fx.ifx.integration.core.config.InboundConfig;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
+import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowManager;
 import com.ssc.ssgm.fx.ifx.integration.core.inbound.SourceInTypeEnum;
 import com.ssc.ssgm.fx.ifx.integration.curd.service.InboundConfigService;
 import com.ssc.ssgm.fx.ifx.integration.util.KeyValueConfigLoadUtil;
@@ -35,7 +35,7 @@ public class InboundController {
     InboundConfigService inboundConfigService;
 
     @Autowired
-    FlowContext flowContext;
+    FlowManager flowManager;
 
     @ApiOperation("get_type")
     @GetMapping("/get_types")
@@ -90,15 +90,23 @@ public class InboundController {
         inboundConfig.setCreatedTime(new Date());
         String properties = inboundConfig.getProperties();
         if (StringUtils.isNoneBlank(properties)) {
+
             Map<String, String> stringMap = KeyValueConfigLoadUtil.loadConfig(properties);
             if (stringMap.isEmpty()) {
                 return Response.fail("properties format is not correct ! please check");
             }
+
+//            stringMap.put("driver","oracle.jdbc.driver.OracleDriver");
+//            stringMap.put("exeSql",inboundConfig.getExecuteSql());
+//            stringMap.put("exeTimer",inboundConfig.getTimer());
+
             properties+="\n";
             if (inboundConfig.getInboundType() == SourceInTypeEnum.JDBC) {
-                properties += "driver=oracle.jdbc.driver.OracleDriver\n";
-                properties += "sql=" + inboundConfig.getExecuteSql() + "\n";
-                properties += "period=" + inboundConfig.getTimer() + "\n";
+                //properties += "driver=oracle.jdbc.driver.OracleDriver\n";
+                properties += "exeSql=" + inboundConfig.getExecuteSql() + "\n";
+                properties += "exeTimer=" + inboundConfig.getTimer() + "\n";
+                properties += "user=" + inboundConfig.getUserName() + "\n";
+                properties += "password=" + inboundConfig.getPassword() + "\n";
                 inboundConfig.setProperties(properties);
             }
             //TODO
@@ -109,7 +117,7 @@ public class InboundController {
             log.error("Inbound config creation failed.");
             return Response.fail();
         }
-        flowContext.addSourceInConfig(inboundConfig);
+        flowManager.addSourceInConfig(inboundConfig);
         return Response.success();
     }
 

@@ -12,6 +12,7 @@ public class OutboundConfig extends BaseConfig {
 
     String hostName;
     String userName;
+    String password;
 
 
 }

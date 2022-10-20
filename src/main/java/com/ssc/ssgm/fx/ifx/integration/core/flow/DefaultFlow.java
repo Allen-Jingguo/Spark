@@ -59,26 +59,30 @@ public class DefaultFlow implements Flow {
     FlowStatus flowStatus;
     FlowTransActionType transActionType;
 
-    FlowContext flowContext;
+    FlowManager flowManager;
 
     FlowConfig flowConfig;
 
     boolean pauseFlag = false;
     boolean runFlag = false;
 
+    private void executeWithTransaction() {
 
-    public synchronized void executeInner() {
-        log.info("=== Flow is executing,id={} flowName={},flowStatus={}", id, name, flowStatus.name());
-        //TODO TransAction
-        if (transActionType == FlowTransActionType.NO) {
 
-        } else {
+    }
 
-        }
+    private void executeNoTransaction() {
+        while (true) {
 
-        try {
-            byte[] bytes;
-            while (!pauseFlag && (bytes = inbound.next()) != null) {
+            if (pauseFlag) {
+                inbound.close();
+                outBound.close();
+                return;
+            }
+
+            try {
+                //will block , until inbound has data
+                byte[] bytes = inbound.next();
                 log.info("=== Flow inside loop execution begin ,id={} flowName={},flowStatus={}", id, name, flowStatus.name());
                 if (bytes.length == 0) {
                     log.info("== inbound next data is empty !");
@@ -87,7 +91,6 @@ public class DefaultFlow implements Flow {
                 List<Map<String, Object>> dataList = parser.parse(bytes);
                 log.info("===  parser result={}", dataList);
                 for (Map<String, Object> originMap : dataList) {
-
                     Map<String, Object> data = originMap;
                     if (keyMapper != null) {
                         data = keyMapper.keyMap(data);
@@ -108,18 +111,53 @@ public class DefaultFlow implements Flow {
                     outBound.put(format);
                     log.info("=== Flow inside loop execution end ");
                 }
+            } catch (Exception e) {
+                log.error("Exception::", e);
             }
-        } catch (Exception e) {
-            log.error("Exception::", e);
         }
+
+
+    }
+
+    private  void executeInner() {
+
+        if (this.flowStatus != FlowStatus.RUNNABLE) {
+            log.info("=== Flow is can't run ,Status error,id={} flowName={},flowStatus={}", id, name, flowStatus.name());
+            return;
+        }
+
+        log.info("=== Flow is executing,id={} flowName={},flowStatus={}", id, name, flowStatus.name());
+
+        if(this.inbound!=null){
+            inbound.close();
+        }
+
+        if(this.outBound!=null){
+            outBound.close();
+        }
+
+        this.pauseFlag=false;
+        this.runFlag=true;
+
+        try{
+            this.init();
+            if (transActionType == FlowTransActionType.YES) {
+                this.executeNoTransaction();
+            } else {
+                this.executeNoTransaction();
+            }
+        }catch (Exception e){
+          log.error("Exception::",e);
+        }
+
     }
 
     private void init() {
 
-        val inboundConfig = this.flowContext.getInboundConfigMaps().get(flowConfig.getInboundConfigId());
-        val outBoundConfig = this.flowContext.getOutboundConfigMaps().get(flowConfig.getOutboundConfigId());
-        val mapperConfig = this.flowContext.getKeyMapperConfigMaps().get(flowConfig.getKeyMapperId());
-        val formatterConfig = this.flowContext.getFormatterConfigMaps().get(flowConfig.getFormatterId());
+        val inboundConfig = this.flowManager.getInboundConfigMaps().get(flowConfig.getInboundConfigId());
+        val outBoundConfig = this.flowManager.getOutboundConfigMaps().get(flowConfig.getOutboundConfigId());
+        val mapperConfig = this.flowManager.getKeyMapperConfigMaps().get(flowConfig.getKeyMapperId());
+        val formatterConfig = this.flowManager.getFormatterConfigMaps().get(flowConfig.getFormatterId());
 
         this.inbound = Inbound.build(inboundConfig);
         this.parser = ParserEnum.getParser(flowConfig.getParserType());
@@ -131,17 +169,18 @@ public class DefaultFlow implements Flow {
 
     @Override
     public void execute() {
+
         if (this.flowStatus == FlowStatus.RUNNABLE) {
             ExecutorUtil.getAsyncTaskExecutor().submit(() -> {
                 try {
-                    this.init();
                     this.executeInner();
                 } catch (Exception e) {
                     log.error("Exception::", e);
                 }
             });
-            return ;
+            return;
         }
+
         throw new SystemException("FLowExecuteStatus error,flowStatus= " + this.flowStatus);
     }
 
@@ -149,18 +188,20 @@ public class DefaultFlow implements Flow {
     public synchronized void start() {
 
         if (this.flowStatus == FlowStatus.NEW || this.flowStatus == FlowStatus.PAUSE) {
-            flowContext.updateFlowStatus(this.getId(), this.flowStatus, FlowStatus.RUNNABLE);
+            flowManager.updateFlowStatus(this.getId(), this.flowStatus, FlowStatus.RUNNABLE);
             this.flowStatus = FlowStatus.RUNNABLE;
+
             ExecutorUtil.getAsyncTaskExecutor().submit(() -> {
                 try {
-                    this.init();
                     this.executeInner();
                 } catch (Exception e) {
                     log.error("Exception::", e);
                 }
             });
-            return ;
+
+            return;
         }
+
         throw new SystemException("FLowExecuteStatus error,flowStatus= " + this.flowStatus);
 
     }
@@ -168,20 +209,20 @@ public class DefaultFlow implements Flow {
     @Override
     public synchronized void stop() {
         if (this.flowStatus == FlowStatus.RUNNABLE || this.flowStatus == FlowStatus.PAUSE) {
-            flowContext.updateFlowStatus(this.getId(), this.flowStatus, FlowStatus.STOPPING);
+            flowManager.updateFlowStatus(this.getId(), this.flowStatus, FlowStatus.STOPPING);
             this.flowStatus = FlowStatus.STOPPING;
             ExecutorUtil.getAsyncTaskExecutor().submit(() -> {
                 try {
                     this.pauseFlag = true;
                     inbound.close();
                     outBound.close();
-                    flowContext.updateFlowStatus(this.getId(), this.flowStatus, FlowStatus.TERMINATION);
+                    flowManager.updateFlowStatus(this.getId(), this.flowStatus, FlowStatus.TERMINATION);
                     this.flowStatus = FlowStatus.TERMINATION;
                 } catch (Exception e) {
                     log.error("Exception::", e);
                 }
             });
-            return ;
+            return;
         }
         throw new SystemException("flowStatus error,flowStatus= " + this.flowStatus);
     }
@@ -190,20 +231,21 @@ public class DefaultFlow implements Flow {
     public synchronized void pause() {
 
         if (this.flowStatus == FlowStatus.RUNNABLE) {
-            flowContext.updateFlowStatus(this.getId(), this.flowStatus, FlowStatus.PAUSING);
+            flowManager.updateFlowStatus(this.getId(), this.flowStatus, FlowStatus.PAUSING);
             this.flowStatus = FlowStatus.PAUSING;
             ExecutorUtil.getAsyncTaskExecutor().submit(() -> {
                 try {
                     this.pauseFlag = true;
                     inbound.close();
                     outBound.close();
-                    flowContext.updateFlowStatus(this.getId(), this.flowStatus, FlowStatus.PAUSE);
+                    //TODO
+                    flowManager.updateFlowStatus(this.getId(), this.flowStatus, FlowStatus.PAUSE);
                     this.flowStatus = FlowStatus.PAUSE;
                 } catch (Exception e) {
                     log.error("Exception::", e);
                 }
             });
-            return ;
+            return;
         }
         throw new SystemException("flowStatus error,flowStatus= " + this.flowStatus);
     }

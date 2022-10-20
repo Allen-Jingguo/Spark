@@ -3,7 +3,7 @@ package com.ssc.ssgm.fx.ifx.integration.ui.controller;
 
 import com.ssc.ssgm.fx.ifx.integration.common.Response;
 import com.ssc.ssgm.fx.ifx.integration.core.config.KeyMapperConfig;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
+import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowManager;
 import com.ssc.ssgm.fx.ifx.integration.core.mapper.KeyMapperEnum;
 import com.ssc.ssgm.fx.ifx.integration.curd.service.KeyMapperConfigService;
 import com.ssc.ssgm.fx.ifx.integration.ui.dto.MapperDTO;
@@ -33,7 +33,7 @@ public class MapperController {
     KeyMapperConfigService keyMapperConfigService;
 
     @Autowired
-    FlowContext flowContext;
+    FlowManager flowManager;
 
     @ApiOperation("get_type")
     @GetMapping("/get_all_key_mapper_type")
@@ -84,7 +84,7 @@ public class MapperController {
         config.setId(id);
         config.setCreatedTime(new Date());
         keyMapperConfigService.addConfig(config);
-        flowContext.addKeyMapperConfig(config);
+        flowManager.addKeyMapperConfig(config);
         return Response.success();
     }
 

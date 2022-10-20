@@ -2,7 +2,7 @@ package com.ssc.ssgm.fx.ifx.integration.task;
 
 
 import com.ssc.ssgm.fx.ifx.integration.core.flow.Flow;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
+import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowManager;
 import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -22,7 +22,7 @@ public class AppTaskExecutor implements ApplicationContextAware, InitializingBea
     ApplicationContext ac;
 
     @Autowired
-    FlowContext flowContext;
+    FlowManager flowManager;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -36,8 +36,8 @@ public class AppTaskExecutor implements ApplicationContextAware, InitializingBea
 
     void init() {
         try {
-            flowContext.initLoadFlows();
-            List<Flow> defaultFlows = new ArrayList<>(flowContext.getFlowsMap().values());
+            flowManager.initLoadFlows();
+            List<Flow> defaultFlows = new ArrayList<>(flowManager.getFlowsMap().values());
             //execute flow
             if (defaultFlows != null && !defaultFlows.isEmpty()) {
                 defaultFlows.forEach(defaultFlow -> {

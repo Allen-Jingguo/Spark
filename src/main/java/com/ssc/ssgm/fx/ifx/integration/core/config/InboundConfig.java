@@ -18,7 +18,7 @@ public class InboundConfig extends BaseConfig {
 //    String driver;
 //    String url;
 //    String user;
-//    String password;
+     String password;
 
 
 }

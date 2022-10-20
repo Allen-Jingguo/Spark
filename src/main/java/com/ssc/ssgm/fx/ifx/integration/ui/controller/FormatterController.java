@@ -3,7 +3,7 @@ package com.ssc.ssgm.fx.ifx.integration.ui.controller;
 
 import com.ssc.ssgm.fx.ifx.integration.common.Response;
 import com.ssc.ssgm.fx.ifx.integration.core.config.FormatterConfig;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
+import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowManager;
 import com.ssc.ssgm.fx.ifx.integration.core.formatter.FormatterEnum;
 import com.ssc.ssgm.fx.ifx.integration.curd.service.FormatterConfigService;
 import io.swagger.annotations.ApiOperation;
@@ -32,7 +32,7 @@ public class FormatterController {
     FormatterConfigService formatterConfigService;
 
     @Autowired
-    FlowContext flowContext;
+    FlowManager flowManager;
 
     @ApiOperation("get_all_formatter_type")
     @GetMapping("/get_all_formatter_type")
@@ -85,7 +85,7 @@ public class FormatterController {
         config.setId(id);
         config.setCreatedTime(new Date());
         formatterConfigService.addConfig(config);
-        flowContext.addFormatterConfig(config);
+        flowManager.addFormatterConfig(config);
         return Response.success();
     }
 

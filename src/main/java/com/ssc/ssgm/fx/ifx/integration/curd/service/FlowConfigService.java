@@ -1,7 +1,7 @@
 package com.ssc.ssgm.fx.ifx.integration.curd.service;
 
 import com.ssc.ssgm.fx.ifx.integration.core.config.FlowConfig;
-import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowContext;
+import com.ssc.ssgm.fx.ifx.integration.core.flow.FlowManager;
 import com.ssc.ssgm.fx.ifx.integration.curd.mapper.FlowConfigMapper;
 import com.ssc.ssgm.fx.ifx.integration.curd.mapper.InboundConfigMapper;
 import com.ssc.ssgm.fx.ifx.integration.curd.mapper.OutboundConfigMapper;
@@ -30,7 +30,7 @@ public class FlowConfigService {
     OutboundConfigMapper outboundConfigMapper;
 
     @Autowired
-    FlowContext flowContext;
+    FlowManager flowManager;
 
     public List<FlowConfig> loadAll() {
 

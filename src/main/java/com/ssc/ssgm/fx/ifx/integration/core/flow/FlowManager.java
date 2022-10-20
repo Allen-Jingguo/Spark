@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @Data
 @Slf4j
-public class FlowContext implements ApplicationContextAware, InitializingBean {
+public class FlowManager implements ApplicationContextAware, InitializingBean {
 
     ApplicationContext ac;
 
@@ -113,7 +113,7 @@ public class FlowContext implements ApplicationContextAware, InitializingBean {
                 .id(flowConfig.getId())
                 .name(flowConfig.getName())
                 .flowConfig(flowConfig)
-                .flowContext(this)
+                .flowManager(this)
                 .build();
 
         flowConfigMaps.put(flowConfig.getId(), flowConfig);
@@ -205,7 +205,7 @@ public class FlowContext implements ApplicationContextAware, InitializingBean {
                         .id(flowConfig.getId())
                         .name(flowConfig.getName())
                         .flowConfig(flowConfig)
-                        .flowContext(this)
+                        .flowManager(this)
                         .build();
 
                 flowsMap.put(flowConfig.getId(), flow);

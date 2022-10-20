@@ -90,8 +90,8 @@ public class JDBCOutbound implements OutBound<String> {
     private void loopExecuteSql() {
         while (true) {
             try {
-                if (stopFlag.get()) {
-                    return;
+                if (stopFlag.get()&&this.dataQueue.size()==0) {
+                    break;
                 }
                 String sql = this.blockTake();
 

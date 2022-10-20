@@ -6,6 +6,7 @@ import lombok.Data;
 public class JDBCExeContext implements ExeContext {
 
     String exeSql;
-    String period;
+    Long period;
+    String exeTimer;
 
 }

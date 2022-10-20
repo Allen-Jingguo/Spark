@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Data
@@ -140,14 +139,12 @@ public class JDBCInbound implements Inbound {
         dataSource.setPassword(properties.get("password").toString());
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.exeContext = new JDBCExeContext();
-        exeContext.setExeSql(properties.get("sql").toString());
 
-        if("loop".equals(properties.get("period").toString())){
-            exeContext.setPeriod("20");
-            ExecutorUtil.getScheduledExecutor().scheduleAtFixedRate(this::run, 10, Long.valueOf(exeContext.getPeriod()), TimeUnit.SECONDS);
-        }else{
-            ExecutorUtil.getAsyncTaskExecutor().submit(this::run);
-        }
+        exeContext.setExeSql(properties.get("exeSql").toString());
+        exeContext.setExeTimer(properties.get("exeTimer").toString());
+        exeContext.setPeriod(10L);
+
+        ExecutorUtil.getAsyncTaskExecutor().submit(this::run);
 
     }
 
@@ -155,44 +152,50 @@ public class JDBCInbound implements Inbound {
      * to be optimized, use multiple connection pools
      */
     private void run() {
-        try {
-            if (this.stopFlag.get()) {
-                return;
-            }
-            List<Map<String, Object>> dataMap = jdbcTemplate.query(exeContext.getExeSql(), new RowMapper<Map<String, Object>>() {
-                public Map<String, Object> mapRow(ResultSet result, int rowNum) throws SQLException {
-                    Map<String, Object> row = null;
-                    try {
-                        row = new HashMap<>();
-                        final val metaData = result.getMetaData();
-                        for (int i = 1; i <= metaData.getColumnCount(); i++) {
-                            final val columnLabel = metaData.getColumnLabel(i);
-                            row.put(columnLabel, result.getObject(columnLabel));
+        while(true){
+            try {
+                if (this.stopFlag.get()) {
+                    return;
+                }
+                List<Map<String, Object>> dataMap = jdbcTemplate.query(exeContext.getExeSql(), new RowMapper<Map<String, Object>>() {
+                    public Map<String, Object> mapRow(ResultSet result, int rowNum) throws SQLException {
+                        Map<String, Object> row = null;
+                        try {
+                            row = new HashMap<>();
+                            final val metaData = result.getMetaData();
+                            for (int i = 1; i <= metaData.getColumnCount(); i++) {
+                                final val columnLabel = metaData.getColumnLabel(i);
+                                row.put(columnLabel, result.getObject(columnLabel));
+                            }
+                        } catch (SQLException e) {
+                            log.error("Exception::", e);
                         }
-                    } catch (SQLException e) {
-                        log.error("Exception::", e);
+                        return row;
                     }
-                    return row;
-                }
-            });
-
-            log.info("===jdbc inbound  :: query sql={}", exeContext.getExeSql());
-
-            log.info("===jdbc inbound query data :: data={}", dataMap.toString());
-            if (dataMap != null) {
-                try {
-                    dataQueue.put(dataMap);
-                    synchronized (waitObject) {
-                        waitObject.notifyAll();
+                });
+                log.info("===jdbc inbound  :: query sql={}", exeContext.getExeSql());
+                log.info("===jdbc inbound query data :: data={}", dataMap.toString());
+                if (dataMap != null) {
+                    try {
+                        dataQueue.put(dataMap);
+                        synchronized (waitObject) {
+                            waitObject.notifyAll();
+                        }
+                    } catch (InterruptedException e2) {
+                        log.error("InterruptedException::", e2);
                     }
-                } catch (InterruptedException e2) {
-                    log.error("InterruptedException::", e2);
                 }
+
+                if("loop".equals(exeContext.getExeTimer())){
+                    //sleep 10 seconds
+                    Thread.sleep(exeContext.getPeriod()*1000L);
+                }
+
+            } catch (Exception e1) {
+                log.error("Exception::", e1);
             }
-
-        } catch (Exception e1) {
-            log.error("Exception::", e1);
         }
+
     }
 
     @Override
